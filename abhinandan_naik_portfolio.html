@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abhinandan Naik — Backend Java Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050816;--accent:#00F5FF;--secondary:#8B5CF6;--highlight:#22C55E;--text:#FFFFFF;--muted:#94A3B8;--card-bg:rgba(255,255,255,0.03);--border:rgba(0,245,255,0.15)}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;overflow-x:hidden;cursor:default}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--accent);border-radius:2px}
+
+/* CANVAS */
+#bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;transition:all .4s ease;backdrop-filter:blur(0px)}
+nav.scrolled{backdrop-filter:blur(20px);background:rgba(5,8,22,.85);border-bottom:1px solid var(--border)}
+.logo{font-family:'JetBrains Mono',monospace;font-size:.9rem;color:var(--accent);letter-spacing:2px;font-weight:700}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.8rem;letter-spacing:1px;text-transform:uppercase;transition:color .3s;font-weight:500}
+.nav-links a:hover{color:var(--accent)}
+.nav-cta{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:.4rem 1.2rem;border-radius:4px;font-size:.75rem;letter-spacing:1px;cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all .3s}
+.nav-cta:hover{background:var(--accent);color:var(--bg)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer}
+.hamburger span{width:24px;height:2px;background:var(--accent);display:block;transition:all .3s}
+
+/* HERO */
+#home{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;padding:0 2rem}
+.hero-content{text-align:center;max-width:900px}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(0,245,255,.08);border:1px solid rgba(0,245,255,.2);padding:.4rem 1.2rem;border-radius:100px;font-size:.75rem;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:2rem;font-family:'JetBrains Mono',monospace}
+.hero-badge::before{content:'';width:6px;height:6px;background:var(--highlight);border-radius:50%;animation:pulse 2s infinite}
+.hero-name{font-size:clamp(2.5rem,7vw,6rem);font-weight:900;line-height:1;letter-spacing:-2px;margin-bottom:1rem}
+.hero-name span{background:linear-gradient(135deg,var(--accent),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-title{font-size:clamp(1rem,2.5vw,1.4rem);color:var(--muted);margin-bottom:1.5rem;font-weight:300;letter-spacing:2px;text-transform:uppercase}
+.hero-desc{font-size:clamp(.9rem,1.5vw,1.1rem);color:var(--muted);max-width:600px;margin:0 auto 3rem;line-height:1.8;font-weight:300}
+.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#0099FF);color:var(--bg);padding:.85rem 2rem;border:none;border-radius:6px;font-weight:700;cursor:pointer;font-size:.85rem;letter-spacing:1px;text-transform:uppercase;transition:all .3s;font-family:'Inter',sans-serif;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(0,245,255,.4)}
+.btn-secondary{background:transparent;color:var(--text);padding:.85rem 2rem;border:1px solid rgba(255,255,255,.2);border-radius:6px;font-weight:500;cursor:pointer;font-size:.85rem;letter-spacing:1px;text-transform:uppercase;transition:all .3s;font-family:'Inter',sans-serif;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+.tech-orbit{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:3rem}
+.tech-tag{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:.3rem .8rem;border-radius:4px;font-size:.7rem;color:var(--muted);font-family:'JetBrains Mono',monospace;transition:all .3s}
+.tech-tag:hover{border-color:var(--accent);color:var(--accent)}
+
+/* SECTIONS */
+section{position:relative;z-index:1;padding:6rem 2rem}
+.container{max-width:1100px;margin:0 auto}
+.section-label{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:.75rem}
+.section-title{font-size:clamp(1.8rem,4vw,3rem);font-weight:800;margin-bottom:1rem;line-height:1.1}
+.section-subtitle{color:var(--muted);font-size:1rem;max-width:600px;line-height:1.7;margin-bottom:3rem}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:0 auto 4rem}
+
+/* ABOUT */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.about-visual{position:relative}
+.profile-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:2rem;text-align:center;position:relative;overflow:hidden}
+.profile-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--secondary))}
+.avatar-ring{width:100px;height:100px;margin:0 auto 1.5rem;position:relative}
+.avatar-inner{width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:2.5rem;font-weight:900;color:var(--bg);animation:rotate-slow 10s linear infinite}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.5rem}
+.stat-card{background:rgba(0,245,255,.05);border:1px solid rgba(0,245,255,.1);border-radius:8px;padding:1rem;text-align:center}
+.stat-num{font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-label{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:.2rem}
+.timeline{position:relative;padding-left:2rem}
+.timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--accent),var(--secondary),transparent)}
+.timeline-item{position:relative;margin-bottom:2.5rem}
+.timeline-item::before{content:'';position:absolute;left:-2.45rem;top:.3rem;width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 15px var(--accent)}
+.timeline-year{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--accent);letter-spacing:2px;margin-bottom:.3rem}
+.timeline-role{font-size:1rem;font-weight:600;margin-bottom:.2rem}
+.timeline-org{font-size:.85rem;color:var(--secondary);margin-bottom:.5rem}
+.timeline-desc{font-size:.85rem;color:var(--muted);line-height:1.6}
+
+/* SKILLS */
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem}
+.skill-category{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.5rem;transition:all .3s;cursor:pointer;position:relative;overflow:hidden}
+.skill-category::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(0,245,255,.06),transparent 60%);opacity:0;transition:opacity .3s}
+.skill-category:hover::before{opacity:1}
+.skill-category:hover{border-color:rgba(0,245,255,.4);transform:translateY(-4px)}
+.skill-cat-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.2rem}
+.skill-cat-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.skill-cat-title{font-size:.9rem;font-weight:600;letter-spacing:.5px}
+.skill-tags{display:flex;flex-wrap:wrap;gap:.5rem}
+.skill-tag{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);padding:.25rem .7rem;border-radius:4px;font-size:.72rem;color:var(--muted);font-family:'JetBrains Mono',monospace;transition:all .2s}
+.skill-tag:hover{background:rgba(0,245,255,.1);border-color:var(--accent);color:var(--accent)}
+
+/* EXPERIENCE */
+.exp-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:2rem;margin-bottom:1.5rem;transition:all .3s;position:relative;overflow:hidden}
+.exp-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--accent),var(--secondary))}
+.exp-card:hover{border-color:rgba(0,245,255,.3);transform:translateX(4px)}
+.exp-header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
+.exp-role{font-size:1.15rem;font-weight:700}
+.exp-company{color:var(--accent);font-size:.9rem;margin-top:.2rem}
+.exp-period{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--secondary);background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);padding:.3rem .8rem;border-radius:4px;white-space:nowrap}
+.exp-highlights{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem;margin-top:1.2rem}
+.exp-highlight{background:rgba(0,245,255,.04);border:1px solid rgba(0,245,255,.08);border-radius:8px;padding:.75rem 1rem;font-size:.82rem;color:var(--muted);line-height:1.5}
+.exp-highlight strong{color:var(--text);display:block;margin-bottom:.2rem;font-size:.8rem}
+
+/* PROJECTS */
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(480px,1fr));gap:2rem}
+.project-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:all .4s;position:relative}
+.project-card:hover{border-color:rgba(0,245,255,.4);transform:translateY(-6px);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.project-header{padding:1.5rem 1.5rem 0;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+.project-num{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--secondary);opacity:.6}
+.project-links{display:flex;gap:.5rem}
+.project-link{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--muted);padding:.35rem .8rem;border-radius:4px;font-size:.7rem;cursor:pointer;transition:all .2s;font-family:'JetBrains Mono',monospace;text-decoration:none}
+.project-link:hover{border-color:var(--accent);color:var(--accent)}
+.project-body{padding:1rem 1.5rem 1.5rem}
+.project-name{font-size:1.3rem;font-weight:700;margin-bottom:.4rem}
+.project-desc{font-size:.85rem;color:var(--muted);line-height:1.6;margin-bottom:1.2rem}
+.project-tech{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.2rem}
+.tech-pill{background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:var(--secondary);padding:.2rem .6rem;border-radius:4px;font-size:.7rem;font-family:'JetBrains Mono',monospace}
+.project-features{display:grid;grid-template-columns:1fr 1fr;gap:.4rem}
+.feature{display:flex;align-items:center;gap:.4rem;font-size:.78rem;color:var(--muted)}
+.feature::before{content:'◆';color:var(--highlight);font-size:.5rem;flex-shrink:0}
+.project-metrics{display:flex;gap:1rem;margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.05)}
+.metric{text-align:center;flex:1}
+.metric-val{font-size:1.1rem;font-weight:700;color:var(--accent)}
+.metric-lbl{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+
+/* ARCHITECTURE */
+.arch-diagram{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:2rem;position:relative;overflow:hidden}
+.arch-diagram::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(0,245,255,.04),transparent 60%);pointer-events:none}
+.arch-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;position:relative}
+.arch-node{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:1rem;text-align:center;cursor:pointer;transition:all .3s;position:relative}
+.arch-node:hover{border-color:var(--accent);background:rgba(0,245,255,.05);transform:scale(1.03)}
+.arch-node.active{border-color:var(--accent);background:rgba(0,245,255,.08);box-shadow:0 0 20px rgba(0,245,255,.15)}
+.arch-icon{font-size:1.8rem;margin-bottom:.5rem}
+.arch-name{font-size:.8rem;font-weight:600;margin-bottom:.25rem}
+.arch-tech{font-size:.65rem;color:var(--secondary);font-family:'JetBrains Mono',monospace}
+.arch-detail{margin-top:1.5rem;background:rgba(0,245,255,.04);border:1px solid rgba(0,245,255,.1);border-radius:10px;padding:1.2rem;display:none}
+.arch-detail.visible{display:block}
+.arch-detail-title{font-size:.9rem;font-weight:600;color:var(--accent);margin-bottom:.5rem}
+.arch-detail-desc{font-size:.82rem;color:var(--muted);line-height:1.6}
+
+/* TERMINAL */
+.terminal{background:#0A0A0F;border:1px solid rgba(0,245,255,.2);border-radius:12px;overflow:hidden;font-family:'JetBrains Mono',monospace}
+.terminal-header{background:rgba(0,0,0,.5);padding:.75rem 1rem;display:flex;align-items:center;gap:.5rem;border-bottom:1px solid rgba(255,255,255,.05)}
+.term-dot{width:12px;height:12px;border-radius:50%}
+.term-title{font-size:.75rem;color:var(--muted);margin-left:.5rem}
+.terminal-body{padding:1.5rem;min-height:280px;max-height:400px;overflow-y:auto}
+.term-line{margin-bottom:.3rem;font-size:.8rem;line-height:1.6}
+.term-prompt{color:var(--accent)}
+.term-cmd{color:var(--text)}
+.term-out{color:var(--muted);margin-left:1rem}
+.term-out.success{color:var(--highlight)}
+.term-out.accent{color:var(--accent)}
+.term-out.secondary{color:var(--secondary)}
+.term-input-line{display:flex;align-items:center;gap:.5rem;margin-top:1rem}
+.term-input{background:transparent;border:none;outline:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:.8rem;flex:1;caret-color:var(--accent)}
+
+/* CONTACT */
+.contact-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:4rem;align-items:start}
+.contact-info{space-y:2rem}
+.contact-item{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem}
+.contact-icon{width:44px;height:44px;border-radius:8px;background:rgba(0,245,255,.08);border:1px solid rgba(0,245,255,.15);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.contact-label{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:.2rem}
+.contact-val{font-size:.9rem;color:var(--text)}
+.contact-form{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:2rem}
+.form-group{margin-bottom:1.2rem}
+.form-label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:.4rem;display:block}
+.form-input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:.75rem 1rem;color:var(--text);font-size:.85rem;font-family:'Inter',sans-serif;outline:none;transition:all .3s}
+.form-input:focus{border-color:var(--accent);background:rgba(0,245,255,.03)}
+.form-input::placeholder{color:rgba(148,163,184,.4)}
+textarea.form-input{resize:vertical;min-height:100px}
+.form-submit{width:100%;background:linear-gradient(135deg,var(--accent),#0099FF);color:var(--bg);padding:.9rem;border:none;border-radius:8px;font-weight:700;font-size:.85rem;letter-spacing:1px;cursor:pointer;transition:all .3s}
+.form-submit:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 10px 30px rgba(0,245,255,.3)}
+
+/* HEATMAP */
+.heatmap-grid{display:grid;gap:.3rem}
+.heatmap-row{display:flex;align-items:center;gap:.5rem}
+.heatmap-label{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);width:100px;text-align:right;flex-shrink:0}
+.heatmap-cells{display:flex;gap:.3rem}
+.hmap-cell{width:16px;height:16px;border-radius:2px;transition:all .2s;cursor:pointer}
+.hmap-cell:hover{transform:scale(1.3)}
+
+/* AI ASSISTANT */
+.ai-chat-btn{position:fixed;bottom:2rem;right:2rem;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--secondary));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.4rem;z-index:2000;box-shadow:0 0 30px rgba(0,245,255,.3);transition:all .3s}
+.ai-chat-btn:hover{transform:scale(1.1);box-shadow:0 0 40px rgba(0,245,255,.5)}
+.ai-panel{position:fixed;bottom:6rem;right:2rem;width:320px;background:#0A0A1A;border:1px solid rgba(0,245,255,.2);border-radius:16px;z-index:2000;display:none;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.8)}
+.ai-panel.open{display:flex;flex-direction:column}
+.ai-panel-header{background:rgba(0,245,255,.08);padding:1rem 1.2rem;border-bottom:1px solid rgba(0,245,255,.1);display:flex;align-items:center;gap:.75rem}
+.ai-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+.ai-name{font-size:.85rem;font-weight:600}
+.ai-status{font-size:.65rem;color:var(--highlight);letter-spacing:.5px}
+.ai-close{margin-left:auto;background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:1.2rem;line-height:1}
+.ai-messages{flex:1;padding:1rem;overflow-y:auto;display:flex;flex-direction:column;gap:.75rem;max-height:300px}
+.ai-msg{max-width:85%;padding:.6rem .9rem;border-radius:12px;font-size:.8rem;line-height:1.5}
+.ai-msg.bot{background:rgba(0,245,255,.08);border:1px solid rgba(0,245,255,.1);color:var(--text);align-self:flex-start;border-bottom-left-radius:4px}
+.ai-msg.user{background:linear-gradient(135deg,var(--secondary),#7C3AED);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.ai-input-area{padding:1rem;border-top:1px solid rgba(255,255,255,.05);display:flex;gap:.5rem}
+.ai-input{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:.5rem .75rem;color:var(--text);font-size:.78rem;font-family:'Inter',sans-serif;outline:none}
+.ai-input:focus{border-color:var(--accent)}
+.ai-send{background:var(--accent);border:none;color:var(--bg);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.ai-send:hover{opacity:.85}
+.ai-suggestions{display:flex;flex-direction:column;gap:.4rem;padding:0 1rem .75rem}
+.ai-sug-btn{background:transparent;border:1px solid rgba(0,245,255,.15);color:var(--muted);padding:.35rem .7rem;border-radius:6px;font-size:.7rem;cursor:pointer;text-align:left;transition:all .2s;font-family:'Inter',sans-serif}
+.ai-sug-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(0,245,255,.05)}
+
+/* CERTS */
+.certs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem}
+.cert-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.5rem;transition:all .3s;position:relative;overflow:hidden;cursor:pointer}
+.cert-card:hover{border-color:var(--secondary);transform:translateY(-4px)}
+.cert-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--secondary),var(--accent))}
+.cert-icon{font-size:2rem;margin-bottom:1rem}
+.cert-name{font-size:.9rem;font-weight:600;margin-bottom:.3rem}
+.cert-org{font-size:.75rem;color:var(--secondary);margin-bottom:.3rem;font-family:'JetBrains Mono',monospace}
+.cert-date{font-size:.7rem;color:var(--muted)}
+.cert-badge{position:absolute;top:1rem;right:1rem;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:var(--highlight);font-size:.6rem;padding:.2rem .6rem;border-radius:4px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.5px}
+
+/* FOOTER */
+footer{position:relative;z-index:1;padding:3rem 2rem;border-top:1px solid var(--border);text-align:center}
+.footer-logo{font-family:'JetBrains Mono',monospace;font-size:1.5rem;color:var(--accent);font-weight:700;letter-spacing:2px;margin-bottom:.75rem}
+.footer-desc{color:var(--muted);font-size:.85rem;margin-bottom:1.5rem}
+.social-links{display:flex;gap:1rem;justify-content:center;margin-bottom:2rem}
+.social-link{width:40px;height:40px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:1.1rem;cursor:pointer;transition:all .3s;text-decoration:none}
+.social-link:hover{border-color:var(--accent);color:var(--accent)}
+.footer-copy{font-size:.75rem;color:rgba(148,163,184,.4);font-family:'JetBrains Mono',monospace}
+
+/* SCROLL REVEAL */
+.reveal{opacity:0;transform:translateY(30px);transition:all .7s cubic-bezier(.4,0,.2,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ANIMATIONS */
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)}}
+@keyframes rotate-slow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes glow{0%,100%{box-shadow:0 0 10px rgba(0,245,255,.2)}50%{box-shadow:0 0 30px rgba(0,245,255,.5)}}
+@keyframes scan{0%{transform:translateY(-100%)}100%{transform:translateY(100vh)}}
+.scan-line{position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(0,245,255,.05),transparent);animation:scan 8s linear infinite;pointer-events:none;z-index:9999}
+
+/* LOADING */
+.loading{position:fixed;inset:0;background:var(--bg);z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity .8s}
+.loading.done{opacity:0;pointer-events:none}
+.load-logo{font-family:'JetBrains Mono',monospace;font-size:1.2rem;color:var(--accent);letter-spacing:4px;margin-bottom:2rem;font-weight:700}
+.load-bar{width:200px;height:2px;background:rgba(0,245,255,.1);border-radius:1px;overflow:hidden}
+.load-progress{height:100%;background:linear-gradient(90deg,var(--accent),var(--secondary));border-radius:1px;animation:load-anim 2s ease forwards}
+.load-text{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);margin-top:1rem;letter-spacing:2px}
+@keyframes load-anim{from{width:0}to{width:100%}}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .nav-links{display:none}
+  .about-grid{grid-template-columns:1fr}
+  .contact-grid{grid-template-columns:1fr}
+  .projects-grid{grid-template-columns:1fr}
+  .arch-grid{grid-template-columns:1fr 1fr}
+  .hero-btns{flex-direction:column;align-items:center}
+}
+</style>
+</head>
+<body>
+
+<div class="loading" id="loader">
+  <div class="load-logo">AN.SYSTEMS</div>
+  <div class="load-bar"><div class="load-progress"></div></div>
+  <div class="load-text" id="loadText">INITIALIZING...</div>
+</div>
+
+<div class="scan-line"></div>
+<canvas id="bg-canvas"></canvas>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="logo">&lt;AN /&gt;</div>
+  <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#architecture">Arch</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Hire Me</button>
+</nav>
+
+<!-- HERO -->
+<section id="home">
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span>● Available for opportunities</span>
+    </div>
+    <h1 class="hero-name">ABHINANDAN<br><span>NAIK</span></h1>
+    <p class="hero-title">Backend Java Engineer</p>
+    <p class="hero-desc">Building scalable enterprise systems with Java, Spring Boot, Cloud and Modern Architecture. Currently engineering at Digit Insurance.</p>
+    <div class="hero-btns">
+      <a href="#projects" class="btn-primary">⬡ Explore Portfolio</a>
+      <a href="#contact" class="btn-secondary">⬢ Contact Me</a>
+      <button class="btn-secondary" onclick="downloadResume()">↓ Resume</button>
+    </div>
+    <div class="tech-orbit">
+      <span class="tech-tag">Java 21</span>
+      <span class="tech-tag">Spring Boot 3.5</span>
+      <span class="tech-tag">PostgreSQL</span>
+      <span class="tech-tag">Docker</span>
+      <span class="tech-tag">AWS</span>
+      <span class="tech-tag">Microservices</span>
+      <span class="tech-tag">REST APIs</span>
+      <span class="tech-tag">React</span>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="divider"></div>
+    <div class="about-grid reveal">
+      <div>
+        <p class="section-label">// about me</p>
+        <h2 class="section-title">Engineer by Craft,<br><span style="color:var(--accent)">Builder by Nature</span></h2>
+        <p class="section-subtitle">A passionate Backend Java Engineer with hands-on experience building production-grade distributed systems, RESTful APIs, and enterprise applications.</p>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-year">2024 — PRESENT</div>
+            <div class="timeline-role">Backend Java Developer</div>
+            <div class="timeline-org">Digit Insurance</div>
+            <div class="timeline-desc">Building and maintaining enterprise-grade insurance backend systems, API integrations, and scalable microservices architecture.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-year">2020 — 2024</div>
+            <div class="timeline-role">BE (Hons.) — Information Science & Engineering</div>
+            <div class="timeline-org">University — Graduated</div>
+            <div class="timeline-desc">Core focus on software engineering, data structures, algorithms, database systems, and distributed computing.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-year">JOURNEY</div>
+            <div class="timeline-role">Open Source & Projects</div>
+            <div class="timeline-org">Self-Driven Engineering</div>
+            <div class="timeline-desc">Built TrackWise Asset Tracking System, Smart Bin IoT system, and various enterprise backends using Java Spring ecosystem.</div>
+          </div>
+        </div>
+      </div>
+      <div class="about-visual reveal">
+        <div class="profile-card">
+          <div class="avatar-ring">
+            <div class="avatar-inner">AN</div>
+          </div>
+          <h3 style="font-size:1.2rem;font-weight:700;margin-bottom:.2rem">Abhinandan Naik</h3>
+          <p style="color:var(--accent);font-size:.8rem;font-family:'JetBrains Mono',monospace;margin-bottom:.3rem">Backend Java Engineer</p>
+          <p style="color:var(--muted);font-size:.75rem;margin-bottom:1rem">📍 India</p>
+          <div style="display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.2rem">
+            <span style="font-size:.7rem;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:var(--highlight);padding:.2rem .7rem;border-radius:4px">English</span>
+            <span style="font-size:.7rem;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:var(--highlight);padding:.2rem .7rem;border-radius:4px">Hindi</span>
+            <span style="font-size:.7rem;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:var(--highlight);padding:.2rem .7rem;border-radius:4px">Kannada</span>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card"><div class="stat-num">2+</div><div class="stat-label">Years Exp</div></div>
+            <div class="stat-card"><div class="stat-num">10+</div><div class="stat-label">Technologies</div></div>
+            <div class="stat-card"><div class="stat-num">5+</div><div class="stat-label">Projects</div></div>
+            <div class="stat-card"><div class="stat-num">100%</div><div class="stat-label">Committed</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="container">
+    <div class="divider"></div>
+    <div class="reveal">
+      <p class="section-label">// tech stack</p>
+      <h2 class="section-title">Weapons of<br><span style="color:var(--secondary)">Mass Creation</span></h2>
+      <p class="section-subtitle">Hover over categories to explore the technology constellation.</p>
+    </div>
+    <div class="skills-grid reveal">
+      <div class="skill-category" onmousemove="trackMouse(this,event)">
+        <div class="skill-cat-header">
+          <div class="skill-cat-icon" style="background:rgba(0,245,255,.1)">☕</div>
+          <div class="skill-cat-title" style="color:var(--accent)">Backend / Core</div>
+        </div>
+        <div class="skill-tags">
+          <span class="skill-tag">Java 21</span><span class="skill-tag">Spring Boot 3.5</span><span class="skill-tag">Spring Security</span><span class="skill-tag">Hibernate</span><span class="skill-tag">JPA</span><span class="skill-tag">REST APIs</span><span class="skill-tag">JWT</span><span class="skill-tag">Maven</span>
+        </div>
+      </div>
+      <div class="skill-category" onmousemove="trackMouse(this,event)">
+        <div class="skill-cat-header">
+          <div class="skill-cat-icon" style="background:rgba(139,92,246,.1)">⚛️</div>
+          <div class="skill-cat-title" style="color:var(--secondary)">Frontend</div>
+        </div>
+        <div class="skill-tags">
+          <span class="skill-tag">React 19</span><span class="skill-tag">Next.js 15</span><span class="skill-tag">TypeScript</span><span class="skill-tag">JavaScript</span><span class="skill-tag">TailwindCSS</span><span class="skill-tag">Framer Motion</span>
+        </div>
+      </div>
+      <div class="skill-category" onmousemove="trackMouse(this,event)">
+        <div class="skill-cat-header">
+          <div class="skill-cat-icon" style="background:rgba(34,197,94,.1)">🗄️</div>
+          <div class="skill-cat-title" style="color:var(--highlight)">Databases</div>
+        </div>
+        <div class="skill-tags">
+          <span class="skill-tag">PostgreSQL</span><span class="skill-tag">MySQL</span><span class="skill-tag">Redis</span><span class="skill-tag">Flyway</span><span class="skill-tag">SQL</span>
+        </div>
+      </div>
+      <div class="skill-category" onmousemove="trackMouse(this,event)">
+        <div class="skill-cat-header">
+          <div class="skill-cat-icon" style="background:rgba(251,191,36,.1)">☁️</div>
+          <div class="skill-cat-title" style="color:#FBB324">Cloud & DevOps</div>
+        </div>
+        <div class="skill-tags">
+          <span class="skill-tag">AWS EC2</span><span class="skill-tag">AWS S3</span><span class="skill-tag">CloudFront</span><span class="skill-tag">Docker</span><span class="skill-tag">GitHub Actions</span><span class="skill-tag">CI/CD</span><span class="skill-tag">Nginx</span>
+        </div>
+      </div>
+      <div class="skill-category" onmousemove="trackMouse(this,event)">
+        <div class="skill-cat-header">
+          <div class="skill-cat-icon" style="background:rgba(239,68,68,.1)">🔧</div>
+          <div class="skill-cat-title" style="color:#EF4444">Tools</div>
+        </div>
+        <div class="skill-tags">
+          <span class="skill-tag">Git</span><span class="skill-tag">GitHub</span><span class="skill-tag">IntelliJ IDEA</span><span class="skill-tag">Postman</span><span class="skill-tag">Swagger/OpenAPI</span><span class="skill-tag">Prometheus</span><span class="skill-tag">Grafana</span>
+        </div>
+      </div>
+      <div class="skill-category" onmousemove="trackMouse(this,event)">
+        <div class="skill-cat-header">
+          <div class="skill-cat-icon" style="background:rgba(99,102,241,.1)">🏗️</div>
+          <div class="skill-cat-title" style="color:#6366F1">Architecture</div>
+        </div>
+        <div class="skill-tags">
+          <span class="skill-tag">Microservices</span><span class="skill-tag">System Design</span><span class="skill-tag">API Gateway</span><span class="skill-tag">Caching</span><span class="skill-tag">Load Balancing</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="container">
+    <div class="divider"></div>
+    <div class="reveal">
+      <p class="section-label">// experience</p>
+      <h2 class="section-title">Command<br><span style="color:var(--accent)">Center</span></h2>
+      <p class="section-subtitle">Professional journey building enterprise systems at scale.</p>
+    </div>
+    <div class="reveal">
+      <div class="exp-card">
+        <div class="exp-header">
+          <div>
+            <div class="exp-role">Backend Java Developer</div>
+            <div class="exp-company">⬡ Digit Insurance</div>
+          </div>
+          <div class="exp-period">2024 — PRESENT</div>
+        </div>
+        <p style="font-size:.85rem;color:var(--muted);line-height:1.7;margin-bottom:1rem">Building and maintaining critical insurance backend systems. Responsible for designing RESTful APIs, implementing business logic, optimizing database queries, and ensuring high availability of core services that power millions of insurance transactions.</p>
+        <div class="exp-highlights">
+          <div class="exp-highlight"><strong>🔌 API Development</strong>Designed and implemented RESTful APIs using Spring Boot handling high-throughput insurance workflows</div>
+          <div class="exp-highlight"><strong>🗄️ Database Optimization</strong>Optimized PostgreSQL queries reducing average response times and improving system throughput</div>
+          <div class="exp-highlight"><strong>🔒 Security Implementation</strong>Implemented JWT-based authentication and role-based access control for secure API endpoints</div>
+          <div class="exp-highlight"><strong>🐳 Containerization</strong>Dockerized microservices and set up CI/CD pipelines for automated testing and deployment</div>
+          <div class="exp-highlight"><strong>📊 System Architecture</strong>Contributed to microservices decomposition and API gateway configuration for scalable architecture</div>
+          <div class="exp-highlight"><strong>🧪 Testing</strong>Wrote unit and integration tests ensuring high code quality and maintainability standards</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="container">
+    <div class="divider"></div>
+    <div class="reveal">
+      <p class="section-label">// featured projects</p>
+      <h2 class="section-title">Engineering<br><span style="color:var(--secondary)">Showcases</span></h2>
+      <p class="section-subtitle">Production-grade systems built with enterprise architecture patterns.</p>
+    </div>
+    <div class="projects-grid reveal">
+      <!-- TrackWise -->
+      <div class="project-card">
+        <div class="project-header">
+          <div class="project-num">PROJECT_001</div>
+          <div class="project-links">
+            <a href="#" class="project-link">GitHub ↗</a>
+            <a href="#" class="project-link">Live ↗</a>
+          </div>
+        </div>
+        <div class="project-body">
+          <h3 class="project-name">TrackWise</h3>
+          <p class="project-desc">Enterprise Asset Tracking System — A full-stack application for managing organizational assets with maintenance scheduling, warranty tracking, real-time notifications, and comprehensive analytics dashboard.</p>
+          <div class="project-tech">
+            <span class="tech-pill">Java</span><span class="tech-pill">Spring Boot</span><span class="tech-pill">PostgreSQL</span><span class="tech-pill">Flyway</span><span class="tech-pill">JWT</span><span class="tech-pill">Docker</span><span class="tech-pill">React</span>
+          </div>
+          <div class="project-features">
+            <div class="feature">Asset Management</div>
+            <div class="feature">Maintenance Tracking</div>
+            <div class="feature">Smart Notifications</div>
+            <div class="feature">Warranty Management</div>
+            <div class="feature">Analytics & Reports</div>
+            <div class="feature">Role-Based Access</div>
+          </div>
+          <div class="project-metrics">
+            <div class="metric"><div class="metric-val">REST</div><div class="metric-lbl">API Design</div></div>
+            <div class="metric"><div class="metric-val">JWT</div><div class="metric-lbl">Auth Security</div></div>
+            <div class="metric"><div class="metric-val">Docker</div><div class="metric-lbl">Containerized</div></div>
+            <div class="metric"><div class="metric-val">v3</div><div class="metric-lbl">OpenAPI Docs</div></div>
+          </div>
+        </div>
+      </div>
+      <!-- Smart Bin -->
+      <div class="project-card">
+        <div class="project-header">
+          <div class="project-num">PROJECT_002</div>
+          <div class="project-links">
+            <a href="#" class="project-link">GitHub ↗</a>
+          </div>
+        </div>
+        <div class="project-body">
+          <h3 class="project-name">Smart Bin Management System</h3>
+          <p class="project-desc">IoT-powered intelligent waste management system using ESP8266 microcontrollers with real-time fill level detection, smart monitoring, route optimization algorithms, and live dashboard visualization for smart cities.</p>
+          <div class="project-tech">
+            <span class="tech-pill">ESP8266</span><span class="tech-pill">Blynk IoT</span><span class="tech-pill">Route Optimization</span><span class="tech-pill">C++</span><span class="tech-pill">Real-time</span>
+          </div>
+          <div class="project-features">
+            <div class="feature">Fill Level Detection</div>
+            <div class="feature">Smart Monitoring</div>
+            <div class="feature">Route Optimization</div>
+            <div class="feature">Real-time Tracking</div>
+            <div class="feature">Dashboard Viz</div>
+            <div class="feature">IoT Integration</div>
+          </div>
+          <div class="project-metrics">
+            <div class="metric"><div class="metric-val">IoT</div><div class="metric-lbl">Hardware</div></div>
+            <div class="metric"><div class="metric-val">Real-time</div><div class="metric-lbl">Monitoring</div></div>
+            <div class="metric"><div class="metric-val">Smart</div><div class="metric-lbl">Routing</div></div>
+            <div class="metric"><div class="metric-val">Cloud</div><div class="metric-lbl">Connected</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <div class="container">
+    <div class="divider"></div>
+    <div class="reveal">
+      <p class="section-label">// system design</p>
+      <h2 class="section-title">Architecture<br><span style="color:var(--accent)">Visualization</span></h2>
+      <p class="section-subtitle">Click any component to explore the system design and request flows.</p>
+    </div>
+    <div class="arch-diagram reveal">
+      <div class="arch-grid" id="archGrid">
+        <div class="arch-node" onclick="showArchDetail('client')" data-id="client">
+          <div class="arch-icon">🖥️</div>
+          <div class="arch-name">Client Layer</div>
+          <div class="arch-tech">React / Next.js</div>
+        </div>
+        <div class="arch-node" onclick="showArchDetail('gateway')" data-id="gateway">
+          <div class="arch-icon">🔀</div>
+          <div class="arch-name">API Gateway</div>
+          <div class="arch-tech">Nginx / Spring</div>
+        </div>
+        <div class="arch-node" onclick="showArchDetail('auth')" data-id="auth">
+          <div class="arch-icon">🔐</div>
+          <div class="arch-name">Auth Service</div>
+          <div class="arch-tech">Spring Security / JWT</div>
+        </div>
+        <div class="arch-node" onclick="showArchDetail('services')" data-id="services">
+          <div class="arch-icon">⚙️</div>
+          <div class="arch-name">Core Services</div>
+          <div class="arch-tech">Spring Boot Microservices</div>
+        </div>
+        <div class="arch-node" onclick="showArchDetail('cache')" data-id="cache">
+          <div class="arch-icon">⚡</div>
+          <div class="arch-name">Cache Layer</div>
+          <div class="arch-tech">Redis</div>
+        </div>
+        <div class="arch-node" onclick="showArchDetail('database')" data-id="database">
+          <div class="arch-icon">🗄️</div>
+          <div class="arch-name">Database</div>
+          <div class="arch-tech">PostgreSQL</div>
+        </div>
+        <div class="arch-node" onclick="showArchDetail('monitoring')" data-id="monitoring">
+          <div class="arch-icon">📊</div>
+          <div class="arch-name">Monitoring</div>
+          <div class="arch-tech">Prometheus / Grafana</div>
+        </div>
+        <div class="arch-node" onclick="showArchDetail('cloud')" data-id="cloud">
+          <div class="arch-icon">☁️</div>
+          <div class="arch-name">Cloud Infra</div>
+          <div class="arch-tech">AWS EC2 / S3 / CDN</div>
+        </div>
+        <div class="arch-node" onclick="showArchDetail('cicd')" data-id="cicd">
+          <div class="arch-icon">🔄</div>
+          <div class="arch-name">CI/CD Pipeline</div>
+          <div class="arch-tech">GitHub Actions / Docker</div>
+        </div>
+      </div>
+      <div class="arch-detail" id="archDetail">
+        <div class="arch-detail-title" id="archDetailTitle"></div>
+        <div class="arch-detail-desc" id="archDetailDesc"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HEATMAP -->
+<section id="heatmap" style="padding:3rem 2rem">
+  <div class="container">
+    <div class="divider"></div>
+    <div class="reveal">
+      <p class="section-label">// skill intensity</p>
+      <h2 class="section-title">Proficiency<br><span style="color:var(--highlight)">Heatmap</span></h2>
+    </div>
+    <div class="reveal" id="heatmapContainer" style="overflow-x:auto;padding:1rem 0"></div>
+  </div>
+</section>
+
+<!-- TERMINAL -->
+<section id="terminal-section" style="padding:2rem">
+  <div class="container">
+    <div class="divider"></div>
+    <div class="reveal">
+      <p class="section-label">// interactive terminal</p>
+      <h2 class="section-title" style="margin-bottom:2rem">Try the<br><span style="color:var(--accent)">Shell</span></h2>
+    </div>
+    <div class="terminal reveal">
+      <div class="terminal-header">
+        <div class="term-dot" style="background:#FF5F57"></div>
+        <div class="term-dot" style="background:#FEBC2E"></div>
+        <div class="term-dot" style="background:#28C840"></div>
+        <span class="term-title">abhinandan@portfolio:~$</span>
+      </div>
+      <div class="terminal-body" id="termBody">
+        <div class="term-line"><span class="term-out accent">Welcome to Abhinandan's Portfolio Terminal v2.0</span></div>
+        <div class="term-line"><span class="term-out">Type <span style="color:var(--accent)">help</span> to see available commands</span></div>
+        <div class="term-line" style="margin-top:.5rem"><span class="term-out">──────────────────────────────────────────</span></div>
+      </div>
+      <div class="term-input-line" style="padding:.5rem 1.5rem 1rem;border-top:1px solid rgba(255,255,255,.05)">
+        <span class="term-prompt">abhinandan@portfolio:~$</span>
+        <input class="term-input" id="termInput" placeholder="type a command..." autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CERTIFICATIONS -->
+<section id="certifications">
+  <div class="container">
+    <div class="divider"></div>
+    <div class="reveal">
+      <p class="section-label">// certifications</p>
+      <h2 class="section-title">Credentials &<br><span style="color:var(--secondary)">Achievements</span></h2>
+    </div>
+    <div class="certs-grid reveal">
+      <div class="cert-card">
+        <div class="cert-badge">VERIFIED</div>
+        <div class="cert-icon">☁️</div>
+        <div class="cert-name">AWS Cloud Practitioner</div>
+        <div class="cert-org">Amazon Web Services</div>
+        <div class="cert-date">Cloud Fundamentals</div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-badge">COMPLETED</div>
+        <div class="cert-icon">☕</div>
+        <div class="cert-name">Spring Boot Microservices</div>
+        <div class="cert-org">Udemy / Spring.io</div>
+        <div class="cert-date">Backend Architecture</div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-badge">COMPLETED</div>
+        <div class="cert-icon">🐳</div>
+        <div class="cert-name">Docker & Kubernetes</div>
+        <div class="cert-org">DevOps Track</div>
+        <div class="cert-date">Container Orchestration</div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-badge">COMPLETED</div>
+        <div class="cert-icon">🏗️</div>
+        <div class="cert-name">System Design</div>
+        <div class="cert-org">Architecture Fundamentals</div>
+        <div class="cert-date">Distributed Systems</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="divider"></div>
+    <div class="reveal">
+      <p class="section-label">// contact</p>
+      <h2 class="section-title">Let's Build<br><span style="color:var(--accent)">Something Great</span></h2>
+      <p class="section-subtitle">Open to exciting backend engineering roles, freelance projects, and collaboration opportunities.</p>
+    </div>
+    <div class="contact-grid reveal">
+      <div class="contact-info">
+        <div class="contact-item">
+          <div class="contact-icon">📧</div>
+          <div><div class="contact-label">Email</div><div class="contact-val">abhinandan@email.com</div></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">💼</div>
+          <div><div class="contact-label">LinkedIn</div><div class="contact-val">linkedin.com/in/abhinandan-naik</div></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">🐙</div>
+          <div><div class="contact-label">GitHub</div><div class="contact-val">github.com/abhinandan-naik</div></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">📍</div>
+          <div><div class="contact-label">Location</div><div class="contact-val">India 🇮🇳</div></div>
+        </div>
+        <div style="margin-top:2rem;background:rgba(0,245,255,.04);border:1px solid rgba(0,245,255,.1);border-radius:12px;padding:1.5rem">
+          <div style="font-size:.75rem;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:.75rem;font-family:'JetBrains Mono',monospace">// Status</div>
+          <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.5rem">
+            <span style="width:8px;height:8px;background:var(--highlight);border-radius:50%;animation:pulse 2s infinite"></span>
+            <span style="font-size:.85rem">Open to backend engineering roles</span>
+          </div>
+          <div style="font-size:.78rem;color:var(--muted);line-height:1.6">Currently at Digit Insurance. Exploring opportunities in high-growth startups and tech companies building Java Spring Boot systems at scale.</div>
+        </div>
+      </div>
+      <div class="contact-form">
+        <div class="form-group">
+          <label class="form-label">Name</label>
+          <input class="form-input" type="text" placeholder="Your name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Subject</label>
+          <input class="form-input" type="text" placeholder="Project discussion / Job opportunity">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="form-input" placeholder="Tell me about the opportunity or project..."></textarea>
+        </div>
+        <button class="form-submit" onclick="submitForm(this)">⬡ Send Message</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">&lt;AN /&gt;</div>
+  <p class="footer-desc">Backend Java Engineer · Digit Insurance · Building at Scale</p>
+  <div class="social-links">
+    <a class="social-link" href="#" title="GitHub">GH</a>
+    <a class="social-link" href="#" title="LinkedIn">LI</a>
+    <a class="social-link" href="#" title="Email">✉</a>
+  </div>
+  <p class="footer-copy">© 2025 Abhinandan Naik · Engineered with Java, Spring Boot & ♥</p>
+</footer>
+
+<!-- AI CHAT -->
+<button class="ai-chat-btn" onclick="toggleAI()" title="AI Assistant">🤖</button>
+<div class="ai-panel" id="aiPanel">
+  <div class="ai-panel-header">
+    <div class="ai-avatar">🤖</div>
+    <div><div class="ai-name">AN Assistant</div><div class="ai-status">● ONLINE</div></div>
+    <button class="ai-close" onclick="toggleAI()">×</button>
+  </div>
+  <div class="ai-messages" id="aiMessages">
+    <div class="ai-msg bot">Hi! I'm Abhinandan's AI assistant. Ask me anything about his skills, projects, or experience! 👋</div>
+  </div>
+  <div class="ai-suggestions" id="aiSuggestions">
+    <button class="ai-sug-btn" onclick="askAI('What technologies does Abhinandan use?')">What tech does he use?</button>
+    <button class="ai-sug-btn" onclick="askAI('Tell me about TrackWise project')">Tell me about projects</button>
+    <button class="ai-sug-btn" onclick="askAI('Is he available for hire?')">Is he available to hire?</button>
+  </div>
+  <div class="ai-input-area">
+    <input class="ai-input" id="aiInput" placeholder="Ask about Abhinandan..." onkeypress="if(event.key==='Enter')sendAI()">
+    <button class="ai-send" onclick="sendAI()">➤</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ─── LOADING ───────────────────────────────────────────────
+const loadTexts=['LOADING SYSTEMS...','COMPILING JAVA...','BOOTING SPRING...','INITIALIZING 3D...','DEPLOYING...'];
+let li=0;
+const ltEl=document.getElementById('loadText');
+const ltTimer=setInterval(()=>{li=(li+1)%loadTexts.length;ltEl.textContent=loadTexts[li]},400);
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    clearInterval(ltTimer);
+    document.getElementById('loader').classList.add('done');
+    initParticles();
+    revealOnScroll();
+  },2200);
+});
+
+// ─── THREE.JS PARTICLES ─────────────────────────────────────
+function initParticles(){
+  const canvas=document.getElementById('bg-canvas');
+  const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setSize(window.innerWidth,window.innerHeight);
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,.1,1000);
+  camera.position.z=5;
+
+  // Stars
+  const starGeo=new THREE.BufferGeometry();
+  const starCount=3000;
+  const positions=new Float32Array(starCount*3);
+  const colors=new Float32Array(starCount*3);
+  for(let i=0;i<starCount;i++){
+    positions[i*3]=(Math.random()-.5)*100;
+    positions[i*3+1]=(Math.random()-.5)*100;
+    positions[i*3+2]=(Math.random()-.5)*100;
+    const c=Math.random();
+    if(c<.33){colors[i*3]=0;colors[i*3+1]=.96;colors[i*3+2]=1;}
+    else if(c<.66){colors[i*3]=.545;colors[i*3+1]=.361;colors[i*3+2]=.965;}
+    else{colors[i*3]=1;colors[i*3+1]=1;colors[i*3+2]=1;}
+  }
+  starGeo.setAttribute('position',new THREE.BufferAttribute(positions,3));
+  starGeo.setAttribute('color',new THREE.BufferAttribute(colors,3));
+  const starMat=new THREE.PointsMaterial({size:.05,vertexColors:true,transparent:true,opacity:.8});
+  const stars=new THREE.Points(starGeo,starMat);
+  scene.add(stars);
+
+  // Floating tech orbs
+  const orbColors=[0x00F5FF,0x8B5CF6,0x22C55E];
+  const orbs=[];
+  for(let i=0;i<6;i++){
+    const geo=new THREE.SphereGeometry(.08,8,8);
+    const mat=new THREE.MeshBasicMaterial({color:orbColors[i%3],transparent:true,opacity:.6});
+    const mesh=new THREE.Mesh(geo,mat);
+    mesh.position.set((Math.random()-.5)*8,(Math.random()-.5)*5,(Math.random()-.5)*3);
+    mesh.userData={ox:mesh.position.x,oy:mesh.position.y,phase:Math.random()*Math.PI*2,speed:0.3+Math.random()*0.5};
+    scene.add(mesh);
+    orbs.push(mesh);
+  }
+
+  let mouse={x:0,y:0};
+  document.addEventListener('mousemove',e=>{mouse.x=(e.clientX/window.innerWidth-.5)*.5;mouse.y=-(e.clientY/window.innerHeight-.5)*.5;});
+
+  let t=0;
+  function animate(){
+    requestAnimationFrame(animate);
+    t+=.005;
+    stars.rotation.y=t*.05;
+    stars.rotation.x=t*.02;
+    camera.position.x+=(mouse.x-camera.position.x)*.02;
+    camera.position.y+=(mouse.y-camera.position.y)*.02;
+    camera.lookAt(scene.position);
+    orbs.forEach(o=>{
+      o.position.y=o.userData.oy+Math.sin(t*o.userData.speed+o.userData.phase)*.3;
+      o.position.x=o.userData.ox+Math.cos(t*o.userData.speed*.7+o.userData.phase)*.2;
+    });
+    renderer.render(scene,camera);
+  }
+  animate();
+
+  window.addEventListener('resize',()=>{
+    camera.aspect=window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth,window.innerHeight);
+  });
+}
+
+// ─── NAV ────────────────────────────────────────────────────
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>50);
+  revealOnScroll();
+});
+
+// ─── SCROLL REVEAL ──────────────────────────────────────────
+function revealOnScroll(){
+  document.querySelectorAll('.reveal').forEach(el=>{
+    const r=el.getBoundingClientRect();
+    if(r.top<window.innerHeight*.88)el.classList.add('visible');
+  });
+}
+
+// ─── SKILL CARD MOUSE ───────────────────────────────────────
+function trackMouse(el,e){
+  const r=el.getBoundingClientRect();
+  el.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');
+  el.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');
+}
+
+// ─── ARCHITECTURE ────────────────────────────────────────────
+const archData={
+  client:{title:'Client Layer — React / Next.js',desc:'Single-page application built with React 19 and Next.js 15. Communicates with the backend through RESTful APIs over HTTPS. Features lazy loading, code splitting, and optimistic UI updates for smooth UX.'},
+  gateway:{title:'API Gateway — Nginx / Spring Cloud Gateway',desc:'Centralized entry point for all API requests. Handles SSL termination, request routing, load balancing, rate limiting (100 req/min per IP), and CORS configuration. Routes requests to appropriate microservices.'},
+  auth:{title:'Authentication Service — Spring Security + JWT',desc:'Stateless JWT-based authentication with RS256 signing. Issues access tokens (15min TTL) and refresh tokens (7 day TTL). Role-based access control: ADMIN, USER, VISITOR. BCrypt password hashing.'},
+  services:{title:'Core Services — Spring Boot Microservices',desc:'Domain-specific Spring Boot services (Asset Service, Notification Service, Report Service). Each service is independently deployable, connects to its own database schema, and exposes a documented REST API via Swagger/OpenAPI 3.0.'},
+  cache:{title:'Cache Layer — Redis',desc:'In-memory data store for session management, frequently accessed data, and rate limiting counters. Reduces database load by ~60% for read-heavy operations. Uses TTL-based expiration and LRU eviction policy.'},
+  database:{title:'Database — PostgreSQL',desc:'Primary relational database with Flyway migration management. Schema versioning, connection pooling via HikariCP (max 20 connections), read replicas for analytics queries. Indexes optimized for common query patterns.'},
+  monitoring:{title:'Monitoring — Prometheus + Grafana',desc:'Spring Boot Actuator exposes /actuator/prometheus metrics. Prometheus scrapes metrics every 15s. Grafana dashboards display JVM metrics, API latency p50/p95/p99, error rates, and custom business metrics. Alerts via PagerDuty.'},
+  cloud:{title:'Cloud Infrastructure — AWS',desc:'EC2 t3.medium instances in Auto Scaling Group (2-10 instances). S3 for static assets and backups. CloudFront CDN for global distribution. Route 53 for DNS. Application Load Balancer distributing traffic across instances.'},
+  cicd:{title:'CI/CD Pipeline — GitHub Actions + Docker',desc:'Push to main triggers: unit tests → integration tests → Docker build → push to ECR → rolling deployment to EC2. Pull requests run: lint + test + sonar scan. Blue-green deployment for zero-downtime releases.'}
+};
+function showArchDetail(id){
+  document.querySelectorAll('.arch-node').forEach(n=>n.classList.toggle('active',n.dataset.id===id));
+  const d=archData[id];
+  document.getElementById('archDetailTitle').textContent=d.title;
+  document.getElementById('archDetailDesc').textContent=d.desc;
+  const det=document.getElementById('archDetail');
+  det.classList.add('visible');
+}
+
+// ─── HEATMAP ─────────────────────────────────────────────────
+function buildHeatmap(){
+  const skills=[
+    {label:'Java',intensity:[9,8,9,9,8,9,10,9,8,9,10,9,8,9,9,8]},
+    {label:'Spring Boot',intensity:[8,9,8,9,9,8,9,10,9,8,9,8,9,9,8,9]},
+    {label:'PostgreSQL',intensity:[7,8,7,8,8,9,8,8,7,9,8,7,8,9,8,7]},
+    {label:'Docker',intensity:[6,7,6,7,8,7,7,8,7,6,8,7,6,8,7,8]},
+    {label:'Spring Security',intensity:[8,7,8,8,7,8,9,8,8,7,8,9,8,7,8,8]},
+    {label:'System Design',intensity:[6,7,7,8,7,8,7,8,8,9,8,7,9,8,8,9]},
+    {label:'REST APIs',intensity:[9,9,8,9,9,9,10,9,9,8,9,10,9,9,8,9]},
+    {label:'CI/CD',intensity:[5,6,6,7,6,7,7,7,8,7,7,8,7,8,8,8]},
+  ];
+  const container=document.getElementById('heatmapContainer');
+  let html='<div class="heatmap-grid">';
+  skills.forEach(s=>{
+    html+=`<div class="heatmap-row"><div class="heatmap-label">${s.label}</div><div class="heatmap-cells">`;
+    s.intensity.forEach(v=>{
+      const alpha=v/10;
+      html+=`<div class="hmap-cell" title="${s.label}: ${v}/10" style="background:rgba(0,245,255,${alpha*0.9});border:1px solid rgba(0,245,255,${alpha*0.3})"></div>`;
+    });
+    html+='</div></div>';
+  });
+  html+='</div>';
+  html+='<div style="display:flex;align-items:center;gap:1rem;margin-top:1.5rem;font-size:.72rem;color:var(--muted);font-family:\'JetBrains Mono\',monospace">';
+  html+='<span>Low proficiency</span>';
+  for(let i=1;i<=10;i++)html+=`<div style="width:16px;height:16px;border-radius:2px;background:rgba(0,245,255,${i/10*.9});border:1px solid rgba(0,245,255,${i/10*.3})"></div>`;
+  html+='<span>Expert</span></div>';
+  container.innerHTML=html;
+}
+buildHeatmap();
+
+// ─── TERMINAL ────────────────────────────────────────────────
+const termCmds={
+  help:{output:['Available commands:','  about      — About Abhinandan Naik','  skills     — Tech stack & expertise','  experience — Work history','  projects   — Featured projects','  contact    — Get in touch','  resume     — Download resume','  clear      — Clear terminal','  easteregg  — 🎯 Try it!'],type:'accent'},
+  about:{output:['Name     : Abhinandan Naik','Role     : Backend Java Developer','Company  : Digit Insurance','Location : India','Skills   : Java, Spring Boot, PostgreSQL, Docker, AWS','Languages: English, Hindi, Kannada','Status   : Open to opportunities 🚀'],type:'success'},
+  skills:{output:['Backend  : Java 21, Spring Boot 3.5, Spring Security, Hibernate, JPA','Frontend : React 19, Next.js 15, TypeScript, TailwindCSS','Database : PostgreSQL, MySQL, Redis','DevOps   : Docker, GitHub Actions, Nginx, AWS','Tools    : IntelliJ, Postman, Swagger, Prometheus, Grafana'],type:'accent'},
+  experience:{output:['[2024-Present] Backend Java Developer @ Digit Insurance','  → Building enterprise insurance backend systems','  → REST API design & development with Spring Boot','  → JWT auth, microservices, Docker containerization','  → PostgreSQL query optimization & database design'],type:'secondary'},
+  projects:{output:['1. TrackWise — Enterprise Asset Tracking System','   Stack: Java, Spring Boot, PostgreSQL, Flyway, JWT, Docker, React','   Features: Asset mgmt, maintenance tracking, analytics','','2. Smart Bin Management System','   Stack: ESP8266, Blynk IoT, Route Optimization','   Features: Fill detection, real-time monitoring, dashboard'],type:'success'},
+  contact:{output:['Email   : abhinandan@email.com','LinkedIn: linkedin.com/in/abhinandan-naik','GitHub  : github.com/abhinandan-naik','Status  : ● AVAILABLE FOR OPPORTUNITIES'],type:'accent'},
+  resume:{output:['Initiating resume download...','✓ Generating PDF...','✓ Fetching latest data...','→ Download started! (resume_abhinandan_naik.pdf)'],type:'success'},
+  easteregg:{output:['  ╔════════════════════════════════╗','  ║   You found the easter egg! 🎉  ║','  ║   Java is not JavaScript!       ║','  ║   Spring is not Spring MVC!     ║','  ║   Docker != Virtual Machine     ║','  ╚════════════════════════════════╝'],type:'secondary'},
+  clear:{clear:true}
+};
+const termInput=document.getElementById('termInput');
+const termBody=document.getElementById('termBody');
+termInput.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    const cmd=termInput.value.trim().toLowerCase();
+    termInput.value='';
+    if(!cmd)return;
+    const line=document.createElement('div');
+    line.className='term-line';
+    line.innerHTML=`<span class="term-prompt">abhinandan@portfolio:~$</span> <span class="term-cmd">${cmd}</span>`;
+    termBody.appendChild(line);
+    if(termCmds[cmd]){
+      const c=termCmds[cmd];
+      if(c.clear){termBody.innerHTML='<div class="term-line"><span class="term-out accent">Terminal cleared. Type help for commands.</span></div>';}
+      else{
+        (c.output||[]).forEach(l=>{
+          const ol=document.createElement('div');
+          ol.className=`term-line`;
+          ol.innerHTML=`<span class="term-out ${c.type||''}">${l}</span>`;
+          termBody.appendChild(ol);
+        });
+      }
+    } else {
+      const el=document.createElement('div');
+      el.className='term-line';
+      el.innerHTML=`<span class="term-out" style="color:#EF4444">bash: ${cmd}: command not found. Type 'help' for commands.</span>`;
+      termBody.appendChild(el);
+    }
+    termBody.scrollTop=termBody.scrollHeight;
+  }
+});
+
+// ─── AI ASSISTANT ────────────────────────────────────────────
+const aiResponses={
+  'technologies':['Abhinandan specializes in Java 21, Spring Boot 3.5, Spring Security, Hibernate/JPA for backend. He also works with React/Next.js for frontend, PostgreSQL & MySQL for databases, and Docker/AWS for cloud and DevOps! 💻'],
+  'tech':['His core tech stack: Java 21 · Spring Boot · Spring Security · JWT · PostgreSQL · Docker · AWS · React/Next.js · Hibernate · Redis · GitHub Actions 🚀'],
+  'trackwise':['TrackWise is an Enterprise Asset Tracking System — a full-stack Java app for managing organizational assets with maintenance scheduling, warranty tracking, real-time notifications, and analytics dashboards. Built with Spring Boot, PostgreSQL, Flyway, JWT auth, Docker, and React! 🏗️'],
+  'project':['He has built: 1) TrackWise — Enterprise Asset Tracking (Java/Spring Boot/PostgreSQL/Docker) 2) Smart Bin Management System (IoT/ESP8266/Blynk/Route Optimization). Both demonstrate real engineering skills! ⚡'],
+  'hire':['Yes! Abhinandan is open to exciting backend engineering opportunities. He is currently at Digit Insurance and looking for high-growth startups and tech companies. Reach out at abhinandan@email.com or via the contact form! 📧'],
+  'available':['Abhinandan is actively exploring new opportunities! He\'s great for backend Java roles at companies building at scale. Drop him a message via the contact form or email directly. 🟢'],
+  'experience':['Abhinandan is a Backend Java Developer at Digit Insurance (2024–Present), working on enterprise insurance systems. He holds a BE (Hons.) in Information Science & Engineering. 2+ years building production Java systems! 💼'],
+  'default':['I can tell you about Abhinandan\'s skills, projects, or how to get in touch! Try asking about his Java skills, Spring Boot experience, or projects he\'s built. 🤖']
+};
+function toggleAI(){document.getElementById('aiPanel').classList.toggle('open')}
+function askAI(q){document.getElementById('aiInput').value=q;sendAI();}
+function sendAI(){
+  const input=document.getElementById('aiInput');
+  const msg=input.value.trim();
+  if(!msg)return;
+  input.value='';
+  const msgs=document.getElementById('aiMessages');
+  const userDiv=document.createElement('div');
+  userDiv.className='ai-msg user';
+  userDiv.textContent=msg;
+  msgs.appendChild(userDiv);
+  document.getElementById('aiSuggestions').style.display='none';
+  setTimeout(()=>{
+    const lower=msg.toLowerCase();
+    let resp=aiResponses.default[0];
+    for(const[key,vals] of Object.entries(aiResponses)){
+      if(lower.includes(key)){resp=vals[0];break;}
+    }
+    const botDiv=document.createElement('div');
+    botDiv.className='ai-msg bot';
+    botDiv.textContent=resp;
+    msgs.appendChild(botDiv);
+    msgs.scrollTop=msgs.scrollHeight;
+  },700);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+document.getElementById('aiInput').addEventListener('keypress',e=>{if(e.key==='Enter')sendAI()});
+
+// ─── FORM ────────────────────────────────────────────────────
+function submitForm(btn){
+  btn.textContent='⟳ Sending...';
+  btn.disabled=true;
+  setTimeout(()=>{
+    btn.textContent='✓ Message Sent! I\'ll respond soon.';
+    btn.style.background='linear-gradient(135deg,var(--highlight),#16A34A)';
+    setTimeout(()=>{btn.textContent='⬡ Send Message';btn.style.background='';btn.disabled=false;},4000);
+  },1800);
+}
+
+// ─── RESUME ──────────────────────────────────────────────────
+function downloadResume(){
+  const a=document.createElement('a');
+  a.href='#';
+  alert('Resume download would start here.\nIn production, this links to resume_abhinandan_naik.pdf');
+}
+
+// ─── INIT ────────────────────────────────────────────────────
+setTimeout(revealOnScroll,2500);
+</script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #050816;
+  --accent: #00F5FF;
+  --secondary: #8B5CF6;
+  --highlight: #22C55E;
+  --text: #FFFFFF;
+  --muted: #94A3B8;
+  --border: #00F5FF;   /* Solid hex to allow Tailwind opacity modifiers like border-border/15 */
+  --card-bg: #FFFFFF;  /* Solid hex to allow Tailwind opacity modifiers like bg-card-bg/3 */
+}
+
+@theme {
+  --color-bg: var(--bg);
+  --color-accent: var(--accent);
+  --color-secondary: var(--secondary);
+  --color-highlight: var(--highlight);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-card-bg: var(--card-bg);
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+/* Scanline Animation */
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.scan-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.05), transparent);
+  animation: scan 8s linear infinite;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Glow effects */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(0, 245, 255, 0.1); }
+  50% { box-shadow: 0 0 35px rgba(0, 245, 255, 0.3); }
+}
+
+.neon-glow {
+  animation: glow-pulse 3s infinite;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 245, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(0, 245, 255, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(0, 245, 255, 0.05);
+}
+
+/* Custom radial grids */
+.cyber-grid {
+  background-image: 
+    linear-gradient(rgba(0, 245, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 245, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Lenis configurations */
+html.lenis {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}

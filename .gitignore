@@ -1,0 +1,23 @@
+# Maven Build Output
+backend/target/
+backend/target/*
+backend/*.jar
+backend/*.war
+
+# OS & IDE Settings
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs & Temporary Files
+*.log
+logs/
+temp/
+tmp/
