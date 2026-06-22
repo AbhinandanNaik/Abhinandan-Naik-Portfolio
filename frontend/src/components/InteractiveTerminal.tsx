@@ -43,47 +43,46 @@ export default function InteractiveTerminal() {
       type: 'success',
       lines: [
         'Name     : Abhinandan Naik',
-        'Role     : Backend Java Developer',
-        'Employer : Digit Insurance (Core Division)',
+        'Role     : Full-Stack Software Engineer',
+        'Employer : Digit Insurance (Motor Insurance Division)',
         'Degree   : BE (Hons.) Information Science & Engineering',
-        'Focus    : Scalable distributed services, JPA audits, and thread safety',
+        'Focus    : Scalable backend APIs, database tuning, and GenAI integrations',
         'Languages: English, Hindi, Kannada',
-        'Status   : Open to backend engineering engagements 🚀'
+        'Status   : Open to full-stack software engineering engagements 🚀'
       ]
     },
     skills: {
       type: 'accent',
       lines: [
-        'Backend  : Java 21, Spring Boot 3.5, Spring Security, Hibernate, JPA',
-        'Frontend : React 19, Next.js 15, TypeScript, TailwindCSS, Zustand',
-        'Database : PostgreSQL, MySQL, Redis, Flyway migrations',
-        'Cloud/Ops: AWS EC2/S3, Nginx Proxy, Docker, GitHub Actions CI/CD',
-        'Telemetry: Spring Actuator, Prometheus scrapers, Grafana Dashboards'
+        'Backend  : Java, Spring Boot, Microservices, Security, REST APIs',
+        'Database : PostgreSQL, MySQL, Redis, DBeaver database tuning',
+        'DevOps   : Kubernetes, Bitbucket, Jenkins CI/CD, Dynatrace validation',
+        'Frontend : Next.js, Supabase, TypeScript, React, TailwindCSS'
       ]
     },
     experience: {
       type: 'secondary',
       lines: [
-        '[2024 - Present] Backend Java Developer @ Digit Insurance',
-        '  ➔ Authored claim workflows using Spring Boot REST controllers',
-        '  ➔ Managed Flyway migrations and connection pools (HikariCP)',
-        '  ➔ Refined PostgreSQL querying, reducing deep join latencies by 42%',
-        '  ➔ Configured Actuator endpoints and custom Prometheus dashboard alerts'
+        '[July 2025 - Present] Software Engineer @ Digit Insurance',
+        '  ➔ Architected scalable backend APIs for Motor Loader & Single Page modules',
+        '  ➔ Implemented Redis caching for bulk policy and payment processing',
+        '  ➔ Tuned complex database schemas in PostgreSQL to ensure integrity',
+        '  ➔ Automated deployment via Bitbucket & Jenkins, microservices in Kubernetes',
+        '  ➔ Monitored endpoints using Dynatrace and contributed to Agentic AI automation'
       ]
     },
     projects: {
       type: 'success',
       lines: [
-        '1. TrackWise ➔ Enterprise Asset Tracking (Java, Boot, JPA, Postgres, Docker)',
-        '   Features: Scheduled maintenance jobs, JWT filter guards, audits',
-        '2. Smart Bin ➔ IoT Waste Coordinator (ESP8266, C++, Route Optimizations)',
-        '   Features: Real-time sensor checking, waste truck routing algorithms'
+        '1. FlowSync ➔ AI-Powered Kanban Board (Next.js, Supabase, State Sync, AI Workflow)',
+        '2. FlashPoll ➔ Real-Time Voting Platform (Node.js, Express, Socket.io, Sessions)',
+        '3. Smart-Bin ➔ IoT Waste Manager (ESP8266, Sensor dashboard, Route optimization)'
       ]
     },
     contact: {
       type: 'accent',
       lines: [
-        'Primary Email : abhinandan@email.com',
+        'Primary Email : abhinandannaik1717@gmail.com',
         'LinkedIn Profile: linkedin.com/in/abhinandan-naik',
         'GitHub Page    : github.com/abhinandan-naik',
         'Availability   : ● ACTIVE FOR INTERVIEWS'
@@ -95,7 +94,7 @@ export default function InteractiveTerminal() {
         'Assembling technical credentials...',
         '✓ Packaging latest database telemetry...',
         '✓ Compiling PDF binary stream...',
-        '➔ Download initiated: resume_abhinandan_naik.pdf 📄'
+        '➔ Download initiated: Abhinandan_Naik_Resume.pdf 📄'
       ]
     },
     easteregg: {
@@ -163,9 +162,14 @@ export default function InteractiveTerminal() {
         spread: 55,
         origin: { x: 1 }
       });
-      // Mock download triggering
+      // Trigger actual resume PDF download
       setTimeout(() => {
-        alert("Resume download triggered.\nLinked to technical version resume.");
+        const link = document.createElement('a');
+        link.href = '/Abhinandan_Naik_Resume.pdf';
+        link.download = 'Abhinandan_Naik_Resume.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       }, 500);
     }
 

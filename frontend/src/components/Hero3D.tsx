@@ -278,7 +278,12 @@ export default function Hero3D() {
 
   const handleResumeDownload = () => {
     trackAction('DOWNLOAD_RESUME');
-    alert("Enterprise PDF CV download triggered.\nIn production, this requests /api/admin/resume");
+    const link = document.createElement('a');
+    link.href = '/Abhinandan_Naik_Resume.pdf';
+    link.download = 'Abhinandan_Naik_Resume.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (

@@ -15,26 +15,26 @@ interface TimelineItem {
 export default function AboutTimeline() {
   const milestones: TimelineItem[] = [
     {
-      year: '2024 — PRESENT',
-      role: 'Backend Java Developer',
-      org: 'Digit Insurance',
-      desc: 'Developing and optimizing high-performance backend microservices for the core insurance division. Focused on building low-latency RESTful APIs, security validation, and query performance audits under heavy transaction loads.',
+      year: 'JULY 2025 — PRESENT',
+      role: 'Software Engineer',
+      org: 'Digit Insurance (Motor Insurance)',
+      desc: 'Architected and deployed scalable backend services for Motor Loader and Single Page modules. Integrated Redis caching for bulk policy ingestion, optimized PostgreSQL schemas, automated deployment pipelines via Jenkins/Bitbucket, and monitored endpoints with Dynatrace.',
       icon: <Briefcase size={16} />,
       color: '#00F5FF',
     },
     {
-      year: '2020 — 2024',
+      year: 'JAN 2022 — JUNE 2025',
       role: 'BE (Hons.) Information Science & Engineering',
-      org: 'Engineering College',
-      desc: 'Graduated with deep theoretical foundations in Computer Science. Studied Core Java, Database Management Systems, Data Structures & Algorithms, Operating Systems, and Distributed Computing systems.',
+      org: 'New Horizon College of Engineering',
+      desc: 'Focused on distributed systems, modern web architecture, and secure software development. Translated theoretical computer science concepts into scalable enterprise solutions.',
       icon: <GraduationCap size={16} />,
       color: '#8B5CF6',
     },
     {
-      year: 'JOURNEY & DEVELOPMENT',
-      role: 'Independent Software Craftsmanship',
-      org: 'Open Source Projects',
-      desc: 'Created and deployed modular systems: TrackWise (an asset tracking product) and IoT waste monitors. Implemented complete pipelines using Docker, GitHub Actions, and RESTful architectures.',
+      year: 'PROJECTS & RESEARCH',
+      role: 'AI & Full-Stack Craftsmanship',
+      org: 'Engineering & Open Source',
+      desc: 'Developed FlowSync (real-time Next.js & Supabase task board), FlashPoll (Express real-time voting tool), and Smart-Bin (IoT waste routing system using ESP8266 microcontrollers).',
       icon: <Code size={16} />,
       color: '#22C55E',
     },
@@ -106,7 +106,7 @@ export default function AboutTimeline() {
                 </div>
               </div>
               <h3 className="text-xl font-bold text-white">Abhinandan Naik</h3>
-              <p className="text-xs font-mono text-accent mt-0.5">Backend Java Engineer</p>
+              <p className="text-xs font-mono text-accent mt-0.5">Full-Stack Software Engineer</p>
               <p className="text-[10px] text-muted font-mono mt-1">📍 India · UTC+5:30</p>
             </div>
 

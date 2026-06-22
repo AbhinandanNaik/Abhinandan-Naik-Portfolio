@@ -74,8 +74,8 @@ export default function ContactHub() {
               </div>
               <div>
                 <div className="text-[10px] font-mono text-muted uppercase tracking-wider">Channel 01</div>
-                <a href="mailto:abhinandan@email.com" className="text-xs text-white hover:text-accent font-mono">
-                  abhinandan@email.com
+                <a href="mailto:abhinandannaik1717@gmail.com" className="text-xs text-white hover:text-accent font-mono">
+                  abhinandannaik1717@gmail.com
                 </a>
               </div>
             </div>
