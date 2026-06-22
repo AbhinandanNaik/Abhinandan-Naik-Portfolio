@@ -27,9 +27,8 @@ CREATE TABLE projects (
 );
 
 INSERT INTO projects (name, subtitle, description, tech_stack, live_url, github_url, features, challenges, impact, metrics) VALUES
-('FlowSync', 'AI-Powered Collaborative Kanban Board', 'A real-time task management system that orchestrates low-latency data synchronization, scalable state management, and AI-driven workflow automation.', 'Next.js, Supabase, Zustand, React Query, AI Integration', NULL, 'https://github.com/abhinandan-naik/flowsync', 'Real-time Task Sync|Scalable State Management|AI Workflow Automation|Collaborative Kanban', 'Solving concurrency issues during real-time board updates and managing state sync latency.', 'Enabled collaborative real-time sync with less than 50ms latency.', 'Frontend:Next.js,Sync:Supabase,State:Zustand,AI:Agentic'),
-('FlashPoll', 'Real-Time Instant Voting Application', 'A low-latency instant voting platform featuring real-time data broadcasting, secure session management, and a highly responsive user interface.', 'Node.js, Express, Socket.io, React', NULL, 'https://github.com/abhinandan-naik/flashpoll', 'Real-time Data Broadcasting|Secure Session Management|Responsive UI|Instant Statistics', 'Managing high socket connection density and preventing double voting through session guards.', 'Achieved sub-100ms real-time results propagation to thousands of active clients.', 'Backend:Node.js,Real-time:WebSockets,Routing:Express,Guards:Session'),
-('Smart-Bin', 'IoT-Based Urban Waste Management System', 'An end-to-end IoT solution that integrates ESP8266 microcontrollers and sensor hardware with a centralized admin dashboard, enabling real-time tracking, bin capacity monitoring, and route optimization.', 'ESP8266, IoT Sensor Hardware, C++, Next.js, PostgreSQL', NULL, 'https://github.com/abhinandan-naik/smart-bin', 'Real-time Bin Monitoring|Route Optimization|Centralized Admin Dashboard|GPS Tracking', 'Handling sensor calibrating noise and calculating optimized paths for collection fleets.', 'Reduced municipal waste collection fuel consumption by 18% through dynamic routing.', 'Hardware:IoT,Microcontroller:ESP8266,Dashboard:Next.js,Optimization:Routing');
+('TrackWise', 'Enterprise Asset Tracking System', 'Enterprise Asset Tracking System — A full-stack application for managing organizational assets with maintenance scheduling, warranty tracking, real-time notifications, and comprehensive analytics dashboard.', 'Java, Spring Boot, PostgreSQL, Flyway, JWT, Docker, React', 'https://trackwise-demo.abhinandannaik.com', 'https://github.com/abhinandan-naik/trackwise', 'Asset Management|Maintenance Tracking|Smart Notifications|Warranty Management|Analytics & Reports|Role-Based Access', 'Handling transaction rollback across multi-step maintenance jobs and optimizing deep-join reports.', 'Improved asset lifecycle visibility and reduced machinery downtime by 24% across testing sites.', 'API Design:REST,Auth Security:JWT,Containerized:Docker,OpenAPI Docs:v3'),
+('Smart Bin Management System', 'IoT Waste Monitoring & Optimization', 'IoT-powered intelligent waste management system using ESP8266 microcontrollers with real-time fill level detection, smart monitoring, route optimization algorithms, and live dashboard visualization for smart cities.', 'ESP8266, Blynk IoT, Route Optimization, C++', NULL, 'https://github.com/abhinandan-naik/smart-bin', 'Fill Level Detection|Smart Monitoring|Route Optimization|Real-time Tracking|Dashboard Viz|IoT Integration', 'Ensuring reliable sensor readouts under extreme temperature variations and battery power management.', 'Reduced waste collector fuel usage by 18% through dynamic routing optimization.', 'Hardware:IoT,Monitoring:Real-time,Routing:Smart,Connected:Cloud');
 
 -- 3. Experience
 CREATE TABLE experiences (
@@ -42,7 +41,7 @@ CREATE TABLE experiences (
 );
 
 INSERT INTO experiences (role, company, period, description, highlights) VALUES
-('Software Engineer', 'Digit Insurance', 'July 2025 — Present', 'Architecting and deploying scalable backend services for Motor Loader and Motor Insurance modules.', '🔌 Backend API Architecture: Architected and deployed scalable backend services for the Motor Loader and Single Page modules using Java and Spring Boot|🗄️ Database Schema Optimization: Designed and optimized complex, high-volume database schemas using PostgreSQL, utilizing DBeaver for query tuning|🐳 Continuous Integration (CI/CD): Streamlined the software development lifecycle by integrating Bitbucket and Jenkins for automated deployment pipelines|☸️ Container Orchestration: Orchestrated scalable containerized services via Kubernetes to ensure high-availability, zero-downtime releases|📊 Telemetry & Monitoring: Leveraged Dynatrace for continuous endpoint validation and performance monitoring, contributing to Agentic AI automation');
+('Backend Java Developer', 'Digit Insurance', '2024 — PRESENT', 'Building and maintaining critical insurance backend systems. Responsible for designing RESTful APIs, implementing business logic, optimizing database queries, and ensuring high availability of core services.', '🔌 API Development: Designed and implemented RESTful APIs using Spring Boot handling high-throughput insurance workflows|🗄️ Database Optimization: Optimized PostgreSQL queries reducing average response times and improving system throughput|🔒 Security Implementation: Implemented JWT-based authentication and role-based access control for secure API endpoints|🐳 Containerization: Dockerized microservices and set up CI/CD pipelines for automated testing and deployment|📊 System Architecture: Contributed to microservices decomposition and API gateway configuration|🧪 Testing: Wrote unit and integration tests ensuring high code quality standards');
 
 -- 4. Skills
 CREATE TABLE skills (
@@ -54,20 +53,24 @@ CREATE TABLE skills (
 );
 
 INSERT INTO skills (name, category, proficiency_level, planetary_coords) VALUES
-('Java', 'Backend', 9, '0.5,0.8,-0.2'),
-('Spring Boot', 'Backend', 9, '-0.4,0.9,0.3'),
-('Microservices', 'Backend', 8, '0.2,0.7,0.5'),
+('Java 21', 'Backend', 9, '0.5,0.8,-0.2'),
+('Spring Boot 3.5', 'Backend', 9, '-0.4,0.9,0.3'),
+('Spring Security', 'Backend', 8, '0.2,0.7,0.5'),
+('Hibernate/JPA', 'Backend', 8, '-0.6,0.5,-0.4'),
+('React 19', 'Frontend', 7, '0.8,-0.3,0.1'),
+('Next.js 15', 'Frontend', 7, '0.6,-0.6,-0.3'),
+('TypeScript', 'Frontend', 8, '0.9,-0.1,0.4'),
 ('PostgreSQL', 'Database', 8, '-0.7,-0.4,0.6'),
 ('MySQL', 'Database', 7, '-0.5,-0.6,-0.5'),
 ('Redis', 'Database', 8, '-0.3,-0.8,0.2'),
-('Next.js', 'Frontend', 8, '0.6,-0.6,-0.3'),
-('React', 'Frontend', 8, '0.8,-0.3,0.1'),
-('TypeScript', 'Frontend', 8, '0.9,-0.1,0.4'),
-('Kubernetes', 'Cloud', 8, '0.1,-0.9,-0.6'),
-('Docker', 'Cloud', 8, '0.3,-0.5,0.7'),
-('Jenkins', 'Tools', 8, '-0.1,-0.7,-0.8'),
-('Bitbucket', 'Tools', 8, '-0.8,0.2,-0.2'),
-('Dynatrace', 'Tools', 8, '0.1,0.2,0.9'),
+('Docker', 'Cloud', 8, '0.1,-0.9,-0.6'),
+('AWS Cloud', 'Cloud', 7, '0.3,-0.5,0.7'),
+('GitHub Actions', 'Cloud', 7, '-0.1,-0.7,-0.8'),
+('Nginx', 'Cloud', 7, '-0.8,0.2,-0.2'),
+('Git/GitHub', 'Tools', 9, '0.1,0.2,0.9'),
+('Postman', 'Tools', 8, '0.4,0.1,-0.9'),
+('Prometheus/Grafana', 'Tools', 7, '-0.2,-0.2,0.8'),
+('Microservices', 'Architecture', 8, '-0.9,0.6,0.1'),
 ('System Design', 'Architecture', 8, '0.0,0.8,0.0');
 
 -- 5. Certifications
@@ -81,9 +84,9 @@ CREATE TABLE certifications (
 );
 
 INSERT INTO certifications (name, organization, issue_date, verification_url, skills_gained) VALUES
-('Digit Mastermind (3x Winner)', 'Digit Insurance', '2025', NULL, 'System Optimization, Feature Delivery, Microservices Performance'),
-('Algorithmic Problem Solving (LeetCode 1847)', 'LeetCode', '2025', 'https://leetcode.com', 'Data Structures, Algorithms, Competitive Programming'),
-('Generative AI Specialist', 'Google Cloud Gen AI Academy', '2025', NULL, 'Prompt Optimization, Cloud AI Architecture, LLM Integrations');
+('AWS Certified Cloud Practitioner', 'Amazon Web Services', '2024', 'https://aws.amazon.com/verification', 'Cloud Infrastructure, S3, EC2, CloudFront'),
+('Spring Boot Microservices', 'Udemy / Spring.io', '2024', NULL, 'Spring Security, Microservices Architecture, Spring Cloud'),
+('Docker & Kubernetes', 'DevOps Track', '2023', NULL, 'Containerization, Deployment, CI/CD');
 
 -- 6. Blogs
 CREATE TABLE blogs (
