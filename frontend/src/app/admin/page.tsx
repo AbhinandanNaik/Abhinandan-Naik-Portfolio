@@ -109,28 +109,15 @@ export default function AdminPage() {
     readMessageMutation.mutate(id);
   };
 
-  // Mock analytics fallback data if server offline
+  // Reset analytics fallback data to zero / empty
   const localAnalyticsFallback = {
-    totalVisits: 1420,
-    uniqueVisitors: 485,
-    resumeDownloads: 124,
-    projectViews: 680,
-    deviceBreakdown: [
-      { device: 'Desktop', count: 320 },
-      { device: 'Mobile', count: 140 },
-      { device: 'Tablet', count: 25 },
-    ],
-    countryBreakdown: [
-      { country: 'India', count: 280 },
-      { country: 'United States', count: 120 },
-      { country: 'Germany', count: 45 },
-      { country: 'United Kingdom', count: 40 },
-    ],
-    pageViews: [
-      { page: '/', views: 980 },
-      { page: '/admin', views: 240 },
-      { page: '/blog', views: 200 },
-    ],
+    totalVisits: 0,
+    uniqueVisitors: 0,
+    resumeDownloads: 0,
+    projectViews: 0,
+    deviceBreakdown: [],
+    countryBreakdown: [],
+    pageViews: [],
   };
 
   const activeMetrics = metrics || localAnalyticsFallback;
@@ -242,15 +229,19 @@ export default function AdminPage() {
             <BarChart3 size={14} />
             Traffic Distribution (By Device)
           </h3>
-          <div className="h-64 font-mono text-[10px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={activeMetrics.deviceBreakdown}>
-                <XAxis dataKey="device" stroke="#94A3B8" fontSize={9} />
-                <YAxis stroke="#94A3B8" fontSize={9} />
-                <Tooltip contentStyle={{ background: '#0A0A16', borderColor: 'rgba(0, 245, 255, 0.15)', fontSize: '10px' }} />
-                <Bar dataKey="count" fill="#8B5CF6" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="h-64 font-mono text-[10px] relative flex items-center justify-center border border-white/5 rounded-lg bg-[#07070B]">
+            {activeMetrics.deviceBreakdown && activeMetrics.deviceBreakdown.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={activeMetrics.deviceBreakdown}>
+                  <XAxis dataKey="device" stroke="#94A3B8" fontSize={9} />
+                  <YAxis stroke="#94A3B8" fontSize={9} />
+                  <Tooltip contentStyle={{ background: '#0A0A16', borderColor: 'rgba(0, 245, 255, 0.15)', fontSize: '10px' }} />
+                  <Bar dataKey="count" fill="#8B5CF6" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <span className="text-muted/40 uppercase tracking-widest text-[9px] font-mono">// No device telemetry registered</span>
+            )}
           </div>
         </div>
 
@@ -260,15 +251,19 @@ export default function AdminPage() {
             <BarChart3 size={14} />
             Page Views Allocation
           </h3>
-          <div className="h-64 font-mono text-[10px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={activeMetrics.pageViews}>
-                <XAxis dataKey="page" stroke="#94A3B8" fontSize={9} />
-                <YAxis stroke="#94A3B8" fontSize={9} />
-                <Tooltip contentStyle={{ background: '#0A0A16', borderColor: 'rgba(0, 245, 255, 0.15)', fontSize: '10px' }} />
-                <Bar dataKey="views" fill="#00F5FF" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="h-64 font-mono text-[10px] relative flex items-center justify-center border border-white/5 rounded-lg bg-[#07070B]">
+            {activeMetrics.pageViews && activeMetrics.pageViews.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={activeMetrics.pageViews}>
+                  <XAxis dataKey="page" stroke="#94A3B8" fontSize={9} />
+                  <YAxis stroke="#94A3B8" fontSize={9} />
+                  <Tooltip contentStyle={{ background: '#0A0A16', borderColor: 'rgba(0, 245, 255, 0.15)', fontSize: '10px' }} />
+                  <Bar dataKey="views" fill="#00F5FF" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <span className="text-muted/40 uppercase tracking-widest text-[9px] font-mono">// No resource hits mapped</span>
+            )}
           </div>
         </div>
 

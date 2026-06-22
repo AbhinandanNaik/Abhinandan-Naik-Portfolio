@@ -5,7 +5,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@SpringBootApplication
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration;
+
+@SpringBootApplication(exclude = {
+    RedisAutoConfiguration.class,
+    RedisRepositoriesAutoConfiguration.class
+})
 @EnableCaching
 @EnableScheduling
 public class PortfolioApplication {
