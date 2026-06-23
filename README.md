@@ -1,5 +1,7 @@
 # Abhinandan Naik — Portfolio Platform
 
+**Live Demo**: [abhinandan-naik-portfolio.vercel.app](https://abhinandan-naik-portfolio.vercel.app)
+
 An enterprise-grade, high-performance personal portfolio website for a Software Engineer & Systems Architect. This project is structured as a decoupled, multi-tier application.
 
 ## 🚀 Architecture Overview

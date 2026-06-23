@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { useTelemetryStore } from '@/store/telemetryStore';
+import { useThemeStore } from '@/store/themeStore';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { KeyRound, ShieldAlert, BarChart3, Mail, LogOut, CheckCircle, Cpu, RefreshCw } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
@@ -13,6 +14,7 @@ export default function AdminPage() {
   const { token, isAuthenticated, login, logout } = useAuthStore();
   const trackAction = useTelemetryStore((state) => state.trackAction);
   const queryClient = useQueryClient();
+  const accentColor = useThemeStore((state) => state.accentColor);
 
   // Login form state
   const [usernameInput, setUsernameInput] = useState('');
@@ -257,8 +259,8 @@ export default function AdminPage() {
                 <BarChart data={activeMetrics.pageViews}>
                   <XAxis dataKey="page" stroke="#94A3B8" fontSize={9} />
                   <YAxis stroke="#94A3B8" fontSize={9} />
-                  <Tooltip contentStyle={{ background: '#0A0A16', borderColor: 'rgba(0, 245, 255, 0.15)', fontSize: '10px' }} />
-                  <Bar dataKey="views" fill="#00F5FF" radius={[4, 4, 0, 0]} />
+                  <Tooltip contentStyle={{ background: '#0A0A16', borderColor: `${accentColor}26`, fontSize: '10px' }} />
+                  <Bar dataKey="views" fill={accentColor} radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (

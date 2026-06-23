@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Briefcase, GraduationCap, Code } from 'lucide-react';
+import { useThemeStore } from '@/store/themeStore';
 
 interface TimelineItem {
   year: string;
@@ -13,6 +14,8 @@ interface TimelineItem {
 }
 
 export default function AboutTimeline() {
+  const accentColor = useThemeStore((state) => state.accentColor);
+  
   const milestones: TimelineItem[] = [
     {
       year: 'JULY 2025 — PRESENT',
@@ -20,7 +23,7 @@ export default function AboutTimeline() {
       org: 'Digit Insurance (Motor Insurance)',
       desc: 'Architected and deployed scalable backend services for Motor Loader and Single Page modules. Integrated Redis caching for bulk policy ingestion, optimized PostgreSQL schemas, automated deployment pipelines via Jenkins/Bitbucket, and monitored endpoints with Dynatrace.',
       icon: <Briefcase size={16} />,
-      color: '#00F5FF',
+      color: accentColor,
     },
     {
       year: 'JAN 2022 — JUNE 2025',

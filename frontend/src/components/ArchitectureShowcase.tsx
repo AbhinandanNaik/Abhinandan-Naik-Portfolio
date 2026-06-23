@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useTelemetryStore } from '@/store/telemetryStore';
+import { useThemeStore } from '@/store/themeStore';
 import { Network, Server, Cpu, Database, KeyRound, Zap, ShieldCheck } from 'lucide-react';
 
 interface ArchNode {
@@ -88,8 +89,13 @@ const archNodes: ArchNode[] = [
 export default function ArchitectureShowcase() {
   const [activeId, setActiveId] = useState<string>('client');
   const trackAction = useTelemetryStore((state) => state.trackAction);
+  const accentColor = useThemeStore((state) => state.accentColor);
 
-  const activeNode = archNodes.find((n) => n.id === activeId) || archNodes[0];
+  const activeNodes = React.useMemo(() => {
+    return archNodes.map(node => node.id === 'gateway' ? { ...node, color: accentColor } : node);
+  }, [accentColor]);
+
+  const activeNode = activeNodes.find((n) => n.id === activeId) || activeNodes[0];
 
   const containerRef = useRef<HTMLDivElement>(null);
   const clientRef = useRef<HTMLDivElement>(null);
@@ -241,7 +247,7 @@ export default function ArchitectureShowcase() {
   return (
     <section id="architecture" className="relative py-24 px-6 md:px-12 bg-bg max-w-6xl mx-auto w-full">
       {/* Visual background grids */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,245,255,0.02),transparent_70%)] pointer-events-none"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(var(--accent-rgb),0.02),transparent_70%)] pointer-events-none"></div>
 
       <div className="text-accent font-mono text-xs tracking-widest uppercase mb-2">
         // System Blueprint
@@ -266,7 +272,7 @@ export default function ArchitectureShowcase() {
             <defs>
               <linearGradient id="gradient-glow" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor="#8B5CF6" />
-                <stop offset="50%" stopColor="#00F5FF" />
+                <stop offset="50%" stopColor={accentColor} />
                 <stop offset="100%" stopColor="#22C55E" />
               </linearGradient>
             </defs>
@@ -344,7 +350,7 @@ export default function ArchitectureShowcase() {
                   : 'border-white/5 bg-white/3 hover:border-white/20'
               }`}
             >
-              <span className="text-[#8B5CF6]">{archNodes[0].icon}</span>
+              <span className="text-[#8B5CF6]">{activeNodes[0].icon}</span>
               <span className="text-[10px] font-mono font-bold text-white leading-tight">NextJS Client</span>
             </div>
 
@@ -354,11 +360,16 @@ export default function ArchitectureShowcase() {
               onClick={() => handleSelectNode('gateway', 'API Gateway')}
               className={`row-start-2 lg:row-start-2 col-start-1 lg:col-start-2 col-span-2 lg:col-span-1 p-3 rounded-lg border text-center cursor-pointer transition-all duration-300 flex flex-col items-center justify-center gap-1.5 self-center mx-auto w-28 h-20 ${
                 activeId === 'gateway' 
-                  ? 'border-[#00F5FF] bg-[#00F5FF]/8 shadow-[0_0_15px_rgba(0,245,255,0.25)]' 
+                  ? '' 
                   : 'border-white/5 bg-white/3 hover:border-white/20'
               }`}
+              style={{
+                borderColor: activeId === 'gateway' ? accentColor : undefined,
+                backgroundColor: activeId === 'gateway' ? `${accentColor}14` : undefined,
+                boxShadow: activeId === 'gateway' ? `0 0 15px ${accentColor}40` : undefined,
+              }}
             >
-              <span className="text-[#00F5FF]">{archNodes[1].icon}</span>
+              <span style={{ color: accentColor }}>{activeNodes[1].icon}</span>
               <span className="text-[10px] font-mono font-bold text-white leading-tight">API Gateway</span>
             </div>
 
@@ -386,7 +397,7 @@ export default function ArchitectureShowcase() {
                   : 'border-white/5 bg-white/3 hover:border-white/20'
               }`}
             >
-              <span className="text-[#6366F1]">{archNodes[3].icon}</span>
+              <span className="text-[#6366F1]">{activeNodes[3].icon}</span>
               <span className="text-[10px] font-mono font-bold text-white leading-tight">Spring Service</span>
             </div>
 
@@ -400,7 +411,7 @@ export default function ArchitectureShowcase() {
                   : 'border-white/5 bg-white/3 hover:border-white/20'
               }`}
             >
-              <span className="text-[#FBB324]">{archNodes[4].icon}</span>
+              <span className="text-[#FBB324]">{activeNodes[4].icon}</span>
               <span className="text-[10px] font-mono font-bold text-white leading-tight">Redis Cache</span>
             </div>
 
@@ -414,7 +425,7 @@ export default function ArchitectureShowcase() {
                   : 'border-white/5 bg-white/3 hover:border-white/20'
               }`}
             >
-              <span className="text-[#22C55E]">{archNodes[5].icon}</span>
+              <span className="text-[#22C55E]">{activeNodes[5].icon}</span>
               <span className="text-[10px] font-mono font-bold text-white leading-tight">Postgres DB</span>
             </div>
           </div>

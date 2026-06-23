@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Activity, ShieldAlert, Cpu, Database, Server, RefreshCw } from 'lucide-react';
+import { useThemeStore } from '@/store/themeStore';
 
 interface MetricItem {
   name: string;
@@ -20,9 +21,10 @@ interface LoggingLine {
 export default function ExperienceDashboard() {
   const [logs, setLogs] = useState<LoggingLine[]>([]);
   const logContainerRef = useRef<HTMLDivElement>(null);
+  const accentColor = useThemeStore((state) => state.accentColor);
 
   const metrics: MetricItem[] = [
-    { name: 'APIs', value: '1.2M/day', label: 'Throughput Handled', icon: <Cpu size={16} />, color: '#00F5FF' },
+    { name: 'APIs', value: '1.2M/day', label: 'Throughput Handled', icon: <Cpu size={16} />, color: accentColor },
     { name: 'DBs', value: '-42%', label: 'Response Latency', icon: <Database size={16} />, color: '#22C55E' },
     { name: 'Uptime', value: '99.98%', label: 'Service SLA', icon: <Server size={16} />, color: '#8B5CF6' },
     { name: 'Security', value: '0 Audits', label: 'CVE Violations', icon: <ShieldAlert size={16} />, color: '#EF4444' }
@@ -165,7 +167,7 @@ export default function ExperienceDashboard() {
                   <span 
                     className="font-bold shrink-0" 
                     style={{ 
-                      color: log.level === 'ERROR' ? '#EF4444' : (log.level === 'WARN' ? '#FBB324' : '#00F5FF') 
+                      color: log.level === 'ERROR' ? '#EF4444' : (log.level === 'WARN' ? '#FBB324' : accentColor) 
                     }}
                   >
                     {log.level}

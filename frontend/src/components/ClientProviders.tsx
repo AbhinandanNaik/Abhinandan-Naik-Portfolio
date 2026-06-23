@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Lenis from 'lenis';
 import { useTelemetryStore } from '@/store/telemetryStore';
+import { useThemeStore } from '@/store/themeStore';
 
 export default function ClientProviders({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({
@@ -17,9 +18,16 @@ export default function ClientProviders({ children }: { children: React.ReactNod
 
   const telemetryInit = useTelemetryStore((state) => state.initialize);
   const trackVisit = useTelemetryStore((state) => state.trackPageVisit);
+  const setAccentColor = useThemeStore((state) => state.setAccentColor);
 
   useEffect(() => {
-    // 1. Initialize Lenis Smooth Scroll
+    // 1. Initialize Accent Color
+    const savedColor = localStorage.getItem('theme_accent_color');
+    if (savedColor) {
+      setAccentColor(savedColor);
+    }
+
+    // 2. Initialize Lenis Smooth Scroll
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -37,7 +45,7 @@ export default function ClientProviders({ children }: { children: React.ReactNod
 
     requestAnimationFrame(raf);
 
-    // 2. Telemetry initial setup
+    // 3. Telemetry initial setup
     telemetryInit();
     
     // Track home page visit
@@ -46,7 +54,7 @@ export default function ClientProviders({ children }: { children: React.ReactNod
     return () => {
       lenis.destroy();
     };
-  }, [telemetryInit, trackVisit]);
+  }, [telemetryInit, trackVisit, setAccentColor]);
 
   return (
     <QueryClientProvider client={queryClient}>

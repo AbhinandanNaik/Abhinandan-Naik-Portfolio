@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useTelemetryStore } from '@/store/telemetryStore';
+import { useThemeStore } from '@/store/themeStore';
 import confetti from 'canvas-confetti';
 
 interface TermLine {
@@ -12,6 +13,7 @@ interface TermLine {
 
 export default function InteractiveTerminal() {
   const [history, setHistory] = useState<string[]>([]);
+  const accentColor = useThemeStore((state) => state.accentColor);
   const [historyIdx, setHistoryIdx] = useState(-1);
   const [inputVal, setInputVal] = useState('');
   const [lines, setLines] = useState<TermLine[]>([
@@ -269,7 +271,7 @@ export default function InteractiveTerminal() {
                     : (line.type === 'success' 
                       ? '#22C55E' 
                       : (line.type === 'accent' 
-                        ? '#00F5FF' 
+                        ? accentColor 
                         : (line.type === 'secondary' ? '#8B5CF6' : 'inherit')))
                 }}
               >

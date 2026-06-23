@@ -5,17 +5,19 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Stars, Text, Float } from '@react-three/drei';
 import * as THREE from 'three';
 import { useTelemetryStore } from '@/store/telemetryStore';
+import { useThemeStore } from '@/store/themeStore';
 import { ArrowRight, Download, Mail } from 'lucide-react';
 
 // ─── 3D SCENE SUB-COMPONENTS ────────────────────────────────
 
 // Grid representing the city floor
 function CityFloor() {
+  const accentColor = useThemeStore((state) => state.accentColor);
   return (
     <group position={[0, -2, 0]}>
       {/* Primary Cyberpunk Cyan Grid */}
       <gridHelper 
-        args={[120, 60, '#00F5FF', '#11152a']} 
+        args={[120, 60, accentColor, '#11152a']} 
         position={[0, 0, 0]} 
       />
       {/* Secondary Violet Grid offset for density */}
@@ -69,7 +71,7 @@ function Skyscraper({ pos, args, color }: BuildingProps) {
       {/* 4. Top glowing antenna spool */}
       <mesh position={[0, h / 2 + 0.4, 0]}>
         <cylinderGeometry args={[0.02, 0.02, 0.8, 4]} />
-        <meshBasicMaterial color="#00F5FF" />
+        <meshBasicMaterial color={color} />
       </mesh>
       <mesh position={[0, h / 2 + 0.8, 0]}>
         <sphereGeometry args={[0.05, 8, 8]} />
@@ -80,10 +82,11 @@ function Skyscraper({ pos, args, color }: BuildingProps) {
 }
 
 function Buildings() {
+  const accentColor = useThemeStore((state) => state.accentColor);
   const buildingData = [
     { pos: [-8, 2, -15] as [number, number, number], args: [2, 8, 2] as [number, number, number], color: '#8B5CF6' },
-    { pos: [-4, 1, -20] as [number, number, number], args: [3, 6, 3] as [number, number, number], color: '#00F5FF' },
-    { pos: [5, 3, -12] as [number, number, number], args: [2.5, 10, 2.5] as [number, number, number], color: '#00F5FF' },
+    { pos: [-4, 1, -20] as [number, number, number], args: [3, 6, 3] as [number, number, number], color: accentColor },
+    { pos: [5, 3, -12] as [number, number, number], args: [2.5, 10, 2.5] as [number, number, number], color: accentColor },
     { pos: [9, 1.5, -18] as [number, number, number], args: [4, 7, 4] as [number, number, number], color: '#8B5CF6' },
     { pos: [-13, 0.5, -10] as [number, number, number], args: [2, 5, 2] as [number, number, number], color: '#22C55E' },
     { pos: [13, 1, -14] as [number, number, number], args: [3, 6, 3] as [number, number, number], color: '#22C55E' },
@@ -101,6 +104,7 @@ function Buildings() {
 
 // Sweeping spotlight beams
 function Spotlights() {
+  const accentColor = useThemeStore((state) => state.accentColor);
   const beamRef1 = useRef<THREE.Mesh>(null);
   const beamRef2 = useRef<THREE.Mesh>(null);
 
@@ -122,7 +126,7 @@ function Spotlights() {
       <mesh ref={beamRef1} position={[-6, -2, -14]} rotation={[0, 0, 0]}>
         <cylinderGeometry args={[0.01, 1.8, 18, 16]} />
         <meshBasicMaterial 
-          color="#00F5FF" 
+          color={accentColor} 
           transparent 
           opacity={0.06} 
           blending={THREE.AdditiveBlending} 
@@ -146,10 +150,11 @@ function Spotlights() {
 
 // Floating tech stack nodes (Holograms)
 function TechHolograms() {
+  const accentColor = useThemeStore((state) => state.accentColor);
   const techs = [
     { text: 'Java 21', pos: [-4.2, 2.6, -5], color: '#E76F51' },
     { text: 'Spring Boot', pos: [3.8, 3.4, -6], color: '#22C55E' },
-    { text: 'PostgreSQL', pos: [-5.2, 0.8, -8], color: '#00F5FF' },
+    { text: 'PostgreSQL', pos: [-5.2, 0.8, -8], color: accentColor },
     { text: 'Docker', pos: [5.2, 1.4, -4], color: '#2496ED' },
     { text: 'AWS Cloud', pos: [-1.8, 3.9, -7], color: '#FF9900' },
     { text: 'Microservices', pos: [1.8, -0.4, -5], color: '#8B5CF6' }
@@ -190,6 +195,7 @@ function TechHolograms() {
 function ParticleStorm() {
   const count = 500;
   const meshRef = useRef<THREE.Points>(null);
+  const accentColor = useThemeStore((state) => state.accentColor);
 
   const points = React.useMemo(() => {
     const p = new Float32Array(count * 3);
@@ -221,7 +227,7 @@ function ParticleStorm() {
       </bufferGeometry>
       <pointsMaterial
         size={0.055}
-        color="#00F5FF"
+        color={accentColor}
         transparent
         opacity={0.5}
         sizeAttenuation
@@ -263,6 +269,7 @@ function CameraController() {
 export default function Hero3D() {
   const [mounted, setMounted] = useState(false);
   const trackAction = useTelemetryStore((state) => state.trackAction);
+  const accentColor = useThemeStore((state) => state.accentColor);
 
   useEffect(() => {
     setMounted(true);
@@ -300,7 +307,7 @@ export default function Hero3D() {
             }}
           >
             <ambientLight intensity={0.4} />
-            <pointLight position={[10, 15, 10]} intensity={1.8} color="#00F5FF" />
+            <pointLight position={[10, 15, 10]} intensity={1.8} color={accentColor} />
             <pointLight position={[-10, 8, -5]} intensity={1.0} color="#8B5CF6" />
             
             <Stars radius={100} depth={50} count={2500} factor={4.5} saturation={0.6} fade speed={1.2} />
@@ -340,7 +347,7 @@ export default function Hero3D() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <button
             onClick={() => handleActionClick('EXPLORE_PORTFOLIO', 'projects')}
-            className="w-full sm:w-auto px-8 py-3.5 rounded bg-gradient-to-r from-accent to-blue-500 text-bg text-xs font-bold uppercase tracking-wider hover:-translate-y-0.5 hover:shadow-[0_0_30px_rgba(0,245,255,0.4)] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full sm:w-auto px-8 py-3.5 rounded bg-gradient-to-r from-accent to-blue-500 text-bg text-xs font-bold uppercase tracking-wider hover:-translate-y-0.5 hover:shadow-[0_0_30px_rgba(var(--accent-rgb),0.4)] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
           >
             Explore Projects
             <ArrowRight size={14} />

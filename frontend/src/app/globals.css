@@ -3,6 +3,7 @@
 :root {
   --bg: #050816;
   --accent: #00F5FF;
+  --accent-rgb: 0, 245, 255;
   --secondary: #8B5CF6;
   --highlight: #22C55E;
   --text: #FFFFFF;
@@ -54,7 +55,7 @@ html, body {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.05), transparent);
+  background: linear-gradient(90deg, transparent, rgba(var(--accent-rgb), 0.05), transparent);
   animation: scan 8s linear infinite;
   pointer-events: none;
   z-index: 9999;
@@ -62,8 +63,8 @@ html, body {
 
 /* Glow effects */
 @keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 15px rgba(0, 245, 255, 0.1); }
-  50% { box-shadow: 0 0 35px rgba(0, 245, 255, 0.3); }
+  0%, 100% { box-shadow: 0 0 15px rgba(var(--accent-rgb), 0.1); }
+  50% { box-shadow: 0 0 35px rgba(var(--accent-rgb), 0.3); }
 }
 
 .neon-glow {
@@ -73,21 +74,21 @@ html, body {
 .glass-card {
   background: rgba(255, 255, 255, 0.02);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 245, 255, 0.1);
+  border: 1px solid rgba(var(--accent-rgb), 0.1);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
   transition: all 0.3s ease;
 }
 
 .glass-card:hover {
-  border-color: rgba(0, 245, 255, 0.25);
-  box-shadow: 0 8px 32px 0 rgba(0, 245, 255, 0.05);
+  border-color: rgba(var(--accent-rgb), 0.25);
+  box-shadow: 0 8px 32px 0 rgba(var(--accent-rgb), 0.05);
 }
 
 /* Custom radial grids */
 .cyber-grid {
   background-image: 
-    linear-gradient(rgba(0, 245, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 245, 255, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(var(--accent-rgb), 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--accent-rgb), 0.03) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 

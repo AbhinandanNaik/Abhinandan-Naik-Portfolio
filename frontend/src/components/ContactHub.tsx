@@ -51,7 +51,7 @@ export default function ContactHub() {
   return (
     <section id="contact" className="relative py-24 px-6 md:px-12 bg-bg max-w-6xl mx-auto w-full">
       {/* Background visual glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,rgba(0,245,255,0.03),transparent_70%)] pointer-events-none"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,rgba(var(--accent-rgb),0.03),transparent_70%)] pointer-events-none"></div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
         

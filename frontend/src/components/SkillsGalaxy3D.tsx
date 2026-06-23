@@ -5,6 +5,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Stars, Text, Float, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { useTelemetryStore } from '@/store/telemetryStore';
+import { useThemeStore } from '@/store/themeStore';
 import { Sparkles, Milestone, Award, X } from 'lucide-react';
 
 // ─── TYPES ──────────────────────────────────────────────────
@@ -254,7 +255,7 @@ function PlanetNode({ cat, onSelect, activeId }: PlanetNodeProps) {
         <div 
           className="whitespace-nowrap px-3 py-1 rounded bg-[#06060F]/95 border text-[10px] font-mono select-none transition-all duration-300 flex items-center gap-1.5"
           style={{ 
-            borderColor: hovered || active ? cat.color : 'rgba(0,245,255,0.08)',
+            borderColor: hovered || active ? cat.color : 'rgba(var(--accent-rgb),0.08)',
             color: hovered || active ? '#FFFFFF' : '#94A3B8',
             boxShadow: hovered || active ? `0 0 15px ${cat.color}40` : 'none'
           }}
@@ -269,12 +270,13 @@ function PlanetNode({ cat, onSelect, activeId }: PlanetNodeProps) {
 
 // Fixed orbit lines for alignment
 function OrbitRings() {
+  const accentColor = useThemeStore((state) => state.accentColor);
   return (
     <group>
       {categories.map((cat, i) => (
         <mesh key={i} rotation={[Math.PI / 2, 0, 0]}>
           <ringGeometry args={[cat.radius - 0.015, cat.radius + 0.015, 64]} />
-          <meshBasicMaterial color="rgba(0, 245, 255, 0.035)" side={THREE.DoubleSide} />
+          <meshBasicMaterial color={accentColor} transparent opacity={0.05} side={THREE.DoubleSide} />
         </mesh>
       ))}
     </group>
@@ -284,15 +286,16 @@ function OrbitRings() {
 // Pulsing star particles at the galaxy center
 function GalacticCoreParticles() {
   const pointsRef = useRef<THREE.Points>(null);
-  const count = 100;
-  
+  const accentColor = useThemeStore((state) => state.accentColor);
+  const count = 300;
+
   const positions = React.useMemo(() => {
     const p = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-      const radius = 0.5 + Math.random() * 0.6;
       const angle = Math.random() * Math.PI * 2;
+      const radius = 0.5 + Math.random() * 1.5;
       p[i * 3] = Math.cos(angle) * radius;
-      p[i * 3 + 1] = (Math.random() - 0.5) * 0.2;
+      p[i * 3 + 1] = (Math.random() - 0.5) * 0.45;
       p[i * 3 + 2] = Math.sin(angle) * radius;
     }
     return p;
@@ -317,7 +320,7 @@ function GalacticCoreParticles() {
       </bufferGeometry>
       <pointsMaterial
         size={0.04}
-        color="#00F5FF"
+        color={accentColor}
         transparent
         opacity={0.4}
         sizeAttenuation
@@ -330,7 +333,22 @@ function GalacticCoreParticles() {
 
 export default function SkillsGalaxy3D() {
   const [selectedCat, setSelectedCat] = useState<SkillCategory | null>(null);
+  const [mounted, setMounted] = useState(false);
   const trackAction = useTelemetryStore((state) => state.trackAction);
+  const accentColor = useThemeStore((state) => state.accentColor);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const activeCategories = React.useMemo(() => {
+    return categories.map(cat => cat.id === 'backend' ? { ...cat, color: accentColor } : cat);
+  }, [accentColor]);
+
+  const activeSelectedCat = React.useMemo(() => {
+    if (!selectedCat) return null;
+    return selectedCat.id === 'backend' ? { ...selectedCat, color: accentColor } : selectedCat;
+  }, [selectedCat, accentColor]);
 
   const handleSelectPlanet = (cat: SkillCategory) => {
     trackAction('SELECT_SKILL_PLANET', cat.name);
@@ -359,36 +377,39 @@ export default function SkillsGalaxy3D() {
         
         {/* R3F Canvas Viewport */}
         <div className="absolute inset-0 z-0">
-          <Canvas camera={{ position: [0, 9, 12], fov: 50 }}>
-            <ambientLight intensity={0.5} />
-            <pointLight position={[0, 0, 0]} intensity={3} color="#00F5FF" />
-            
-            {/* Glowing Sun Center */}
-            <mesh position={[0, 0, 0]}>
-              <sphereGeometry args={[0.55, 32, 32]} />
-              <meshBasicMaterial color="#00F5FF" />
-            </mesh>
+          {mounted && (
+            <Canvas camera={{ position: [0, 9, 12], fov: 50 }}>
+              <ambientLight intensity={0.5} />
+              <pointLight position={[0, 0, 0]} intensity={3} color={accentColor} />
+              
+              {/* Glowing Sun Center */}
+              <mesh position={[0, 0, 0]}>
+                <sphereGeometry args={[0.55, 32, 32]} />
+                <meshBasicMaterial color={accentColor} />
+              </mesh>
 
-            <GalacticCoreParticles />
-            <OrbitRings />
-            <CameraController selectedPlanet={selectedCat} />
-            
-            {categories.map((cat) => (
-              <PlanetNode 
-                key={cat.id} 
-                cat={cat} 
-                onSelect={handleSelectPlanet}
-                activeId={selectedCat ? selectedCat.id : null}
-              />
-            ))}
-          </Canvas>
+              <GalacticCoreParticles />
+              <OrbitRings />
+              <CameraController selectedPlanet={activeSelectedCat} />
+              
+              {activeCategories.map((cat) => (
+                <PlanetNode 
+                  key={cat.id} 
+                  cat={cat} 
+                  onSelect={handleSelectPlanet}
+                  activeId={selectedCat ? selectedCat.id : null}
+                />
+              ))}
+            </Canvas>
+          )}
         </div>
 
         {/* Floating Reset Camera View Button */}
         {selectedCat && (
           <button
             onClick={() => setSelectedCat(null)}
-            className="absolute bottom-6 left-6 z-10 px-4 py-2 border border-accent/20 bg-bg/95 text-accent font-mono text-[10px] uppercase tracking-wider rounded hover:bg-accent hover:text-bg transition-all cursor-pointer shadow-[0_0_15px_rgba(0,245,255,0.15)]"
+            className="absolute bottom-6 left-6 z-10 px-4 py-2 border border-accent/20 bg-bg/95 text-accent font-mono text-[10px] uppercase tracking-wider rounded hover:bg-accent hover:text-bg transition-all cursor-pointer shadow-[0_0_15px_rgba(var(--accent-rgb),0.15)]"
+            style={{ boxShadow: `0 0 15px ${accentColor}30`, borderColor: `${accentColor}30`, color: accentColor }}
           >
             ⟲ Reset Camera
           </button>
@@ -396,8 +417,8 @@ export default function SkillsGalaxy3D() {
 
         {/* Floating Galaxy Legend */}
         <div className="absolute top-4 left-4 z-10 p-4 rounded bg-bg/90 backdrop-blur-md border border-white/5 font-mono text-[9px] text-muted flex flex-col gap-2 pointer-events-none select-none">
-          <div className="text-accent uppercase font-bold border-b border-white/5 pb-1 mb-1">Interactive Legend</div>
-          <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-[#00F5FF]"></span> Backend / Core</div>
+          <div className="text-accent uppercase font-bold border-b border-white/5 pb-1 mb-1" style={{ color: accentColor }}>Interactive Legend</div>
+          <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full" style={{ backgroundColor: accentColor }}></span> Backend / Core</div>
           <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-[#8B5CF6]"></span> Frontend</div>
           <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-[#22C55E]"></span> Databases</div>
           <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-[#FBB324]"></span> Cloud & Infra</div>
@@ -406,7 +427,7 @@ export default function SkillsGalaxy3D() {
         </div>
 
         {/* Details Side Drawer (Overlay) */}
-        {selectedCat && (
+        {activeSelectedCat && (
           <div className="absolute right-0 top-0 bottom-0 w-full sm:w-[370px] bg-[#05050D]/95 backdrop-blur-md border-l border-border/30 z-20 p-8 flex flex-col gap-6 overflow-y-auto animate-in slide-in-from-right duration-300">
             {/* Close Button */}
             <button 
@@ -419,11 +440,11 @@ export default function SkillsGalaxy3D() {
             {/* Header */}
             <div className="border-b border-white/5 pb-4">
               <div className="flex items-center gap-3">
-                <span className="text-2xl">{selectedCat.icon}</span>
+                <span className="text-2xl">{activeSelectedCat.icon}</span>
                 <div>
-                  <h3 className="text-lg font-bold text-white font-mono">{selectedCat.name}</h3>
-                  <div className="text-[10px] font-mono mt-0.5 uppercase tracking-wider" style={{ color: selectedCat.color }}>
-                    Experience: {selectedCat.experience}
+                  <h3 className="text-lg font-bold text-white font-mono">{activeSelectedCat.name}</h3>
+                  <div className="text-[10px] font-mono mt-0.5 uppercase tracking-wider" style={{ color: activeSelectedCat.color }}>
+                    Experience: {activeSelectedCat.experience}
                   </div>
                 </div>
               </div>
@@ -432,11 +453,11 @@ export default function SkillsGalaxy3D() {
             {/* Technologies */}
             <div>
               <h4 className="text-xs font-mono text-muted uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                <Sparkles size={12} style={{ color: selectedCat.color }} />
+                <Sparkles size={12} style={{ color: activeSelectedCat.color }} />
                 Core Technologies
               </h4>
               <div className="flex flex-wrap gap-1.5">
-                {selectedCat.technologies.map((t) => (
+                {activeSelectedCat.technologies.map((t) => (
                   <span 
                     key={t} 
                     className="text-[10px] font-mono px-2.5 py-1 rounded bg-white/3 border border-white/5 text-muted hover:text-white hover:border-white/10 transition-colors"
@@ -450,16 +471,16 @@ export default function SkillsGalaxy3D() {
             {/* Associated Projects */}
             <div>
               <h4 className="text-xs font-mono text-muted uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                <Milestone size={12} style={{ color: selectedCat.color }} />
+                <Milestone size={12} style={{ color: activeSelectedCat.color }} />
                 Featured Systems
               </h4>
               <ul className="flex flex-col gap-2 pl-0">
-                {selectedCat.projects.map((p, index) => (
+                {activeSelectedCat.projects.map((p, index) => (
                   <li 
                     key={index}
                     className="text-xs text-muted flex items-start gap-2 bg-white/2 border border-white/5 p-3 rounded"
                   >
-                    <Award size={14} className="mt-0.5 shrink-0" style={{ color: selectedCat.color }} />
+                    <Award size={14} className="mt-0.5 shrink-0" style={{ color: activeSelectedCat.color }} />
                     <span>{p}</span>
                   </li>
                 ))}

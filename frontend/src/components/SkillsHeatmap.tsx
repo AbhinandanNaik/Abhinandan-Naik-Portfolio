@@ -47,9 +47,9 @@ export default function SkillsHeatmap() {
                       key={idx}
                       className="w-4 h-4 rounded-sm transition-all duration-200 cursor-pointer hover:scale-130"
                       style={{
-                        background: `rgba(0, 245, 255, ${alpha * 0.95})`,
-                        border: `1px solid rgba(0, 245, 255, ${alpha * 0.3})`,
-                        boxShadow: val >= 9 ? '0 0 8px rgba(0, 245, 255, 0.2)' : 'none',
+                        background: `rgba(var(--accent-rgb), ${alpha * 0.95})`,
+                        border: `1px solid rgba(var(--accent-rgb), ${alpha * 0.3})`,
+                        boxShadow: val >= 9 ? '0 0 8px rgba(var(--accent-rgb), 0.2)' : 'none',
                       }}
                       title={`${row.label} Proficiency: ${val}/10`}
                     />
@@ -69,8 +69,8 @@ export default function SkillsHeatmap() {
                 key={v}
                 className="w-4.5 h-4.5 rounded-sm"
                 style={{
-                  background: `rgba(0, 245, 255, ${(v / 10) * 0.9})`,
-                  border: `1px solid rgba(0, 245, 255, ${(v / 10) * 0.3})`,
+                  background: `rgba(var(--accent-rgb), ${(v / 10) * 0.9})`,
+                  border: `1px solid rgba(var(--accent-rgb), ${(v / 10) * 0.3})`,
                 }}
               />
             ))}

@@ -95,7 +95,7 @@ export default function AIAssistant() {
       {/* Floating Button */}
       <button
         onClick={handleToggle}
-        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-r from-accent to-secondary text-bg flex items-center justify-center font-bold text-xl shadow-[0_0_30px_rgba(0,245,255,0.3)] hover:scale-110 hover:shadow-[0_0_40px_rgba(0,245,255,0.5)] transition-all duration-300 z-50 cursor-pointer"
+        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-r from-accent to-secondary text-bg flex items-center justify-center font-bold text-xl shadow-[0_0_30px_rgba(var(--accent-rgb),0.3)] hover:scale-110 hover:shadow-[0_0_40px_rgba(var(--accent-rgb),0.5)] transition-all duration-300 z-50 cursor-pointer"
         title="Ask Abhinandan's AI"
       >
         <Bot size={24} />
