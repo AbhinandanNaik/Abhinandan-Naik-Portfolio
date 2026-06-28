@@ -4,6 +4,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useTelemetryStore } from '@/store/telemetryStore';
 import { useThemeStore } from '@/store/themeStore';
 import { Network, Server, Cpu, Database, KeyRound, Zap, ShieldCheck } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { API_BASE } from '@/config/api';
 
 interface ArchNode {
   id: string;
@@ -14,86 +16,137 @@ interface ArchNode {
   title: string;
   desc: string;
   flow: string;
-  connections: string[]; // Node IDs that this node connects to
+  connections: string[];
 }
 
-const archNodes: ArchNode[] = [
+interface DbArchNode {
+  id: string;
+  name: string;
+  tech: string;
+  icon: string;
+  color: string;
+  title: string;
+  description: string;
+  flowSequence: string;
+  connections: string;
+}
+
+const fallbackDbNodes: DbArchNode[] = [
   {
     id: 'client',
     name: 'Client Layer',
     tech: 'React / Next.js',
-    icon: <Cpu size={20} />,
+    icon: 'cpu',
     color: '#8B5CF6',
     title: 'Client Layer — React / Next.js 15',
-    desc: 'Single-page application pre-rendered using static rendering and optimized using React 19. It serves static layout elements instantly and handles dynamic data fetching asynchronously via React Query.',
-    flow: 'User Action ➔ Next.js client intercepts ➔ Fires AJAX request to API Gateway',
-    connections: ['gateway'],
+    description: 'Single-page application pre-rendered using static rendering and optimized using React 19. It serves static layout elements instantly and handles dynamic data fetching asynchronously via React Query.',
+    flowSequence: 'User Action ➔ Next.js client intercepts ➔ Fires AJAX request to API Gateway',
+    connections: 'gateway',
   },
   {
     id: 'gateway',
     name: 'API Gateway',
     tech: 'Nginx Proxy',
-    icon: <Network size={20} />,
+    icon: 'network',
     color: '#00F5FF',
     title: 'API Gateway — Nginx Reverse Proxy',
-    desc: 'The single entry checkpoint for all web requests. Offloads SSL handshakes, strips CORS headers, and routes `/api/**` traffic directly to Spring Boot backend services.',
-    flow: 'HTTPS Request ➔ SSL Decryption ➔ Header Sanitization ➔ Proxy Forward to Port 8888',
-    connections: ['auth', 'services'],
+    description: 'The single entry checkpoint for all web requests. Offloads SSL handshakes, strips CORS headers, and routes `/api/**` traffic directly to Spring Boot backend services.',
+    flowSequence: 'HTTPS Request ➔ SSL Decryption ➔ Header Sanitization ➔ Proxy Forward to Port 8888',
+    connections: 'auth,services',
   },
   {
     id: 'auth',
     name: 'Auth Security',
     tech: 'Spring Security / JWT',
-    icon: <KeyRound size={20} />,
+    icon: 'key',
     color: '#EF4444',
     title: 'Authentication Service — Security Context Filter',
-    desc: 'Stateless access authorization filter. Validates signature claims on incoming JWT tokens, handles admin credential matches via BCrypt, and injects user profiles into the Spring security context.',
-    flow: 'Filter checks authorization header ➔ Verifies RS256 JWT key claims ➔ Sets security session',
-    connections: ['services'],
+    description: 'Stateless access authorization filter. Validates signature claims on incoming JWT tokens, handles admin credential matches via BCrypt, and injects user profiles into the Spring security context.',
+    flowSequence: 'Filter checks authorization header ➔ Verifies RS256 JWT key claims ➔ Sets security session',
+    connections: 'services',
   },
   {
     id: 'services',
     name: 'Core Services',
     tech: 'Spring Boot 3.5',
-    icon: <Server size={20} />,
+    icon: 'server',
     color: '#6366F1',
     title: 'Core Services — Spring Boot Business Logic',
-    desc: 'Processes business models and operations. Serves projects datasets, updates blog entries, captures analytical telemetries, and handles automated rate-limiting checks.',
-    flow: 'Processes logic ➔ Queries Redis Cache (Read-heavy) ➔ Queries Postgres (Write/Transactional)',
-    connections: ['cache', 'database'],
+    description: 'Processes business models and operations. Serves projects datasets, updates blog entries, captures analytical telemetries, and handles automated rate-limiting checks.',
+    flowSequence: 'Processes logic ➔ Queries Redis Cache (Read-heavy) ➔ Queries Postgres (Write/Transactional)',
+    connections: 'cache,database',
   },
   {
     id: 'cache',
     name: 'Cache Layer',
     tech: 'Redis Memory Cache',
-    icon: <Zap size={20} />,
+    icon: 'zap',
     color: '#FBB324',
     title: 'Cache Layer — Redis Memory Storage',
-    desc: 'High-speed key-value cache. Stores frequently loaded assets and rate limit session trackers, reducing SQL fetch demands by up to 60%.',
-    flow: 'Check cache ➔ HIT: return cached JSON ➔ MISS: fetch DB ➔ write to cache ➔ return',
-    connections: [],
+    description: 'High-speed key-value cache. Stores frequently loaded assets and rate limit session trackers, reducing SQL fetch demands by up to 60%.',
+    flowSequence: 'Check cache ➔ HIT: return cached JSON ➔ MISS: fetch DB ➔ write to cache ➔ return',
+    connections: '',
   },
   {
     id: 'database',
     name: 'Database',
     tech: 'PostgreSQL DB',
-    icon: <Database size={20} />,
+    icon: 'database',
     color: '#22C55E',
     title: 'Database — PostgreSQL Storage',
-    desc: 'Persistent transactional database managed with Flyway schema versioning. Configured with optimized index tables on query slugs and composite timestamp logs.',
-    flow: 'Spring Boot JPA leases connection ➔ Runs parameterized queries ➔ Commits transaction',
-    connections: [],
+    description: 'Persistent transactional database managed with Flyway schema versioning. Configured with optimized index tables on query slugs and composite timestamp logs.',
+    flowSequence: 'Spring Boot JPA leases connection ➔ Runs parameterized queries ➔ Commits transaction',
+    connections: '',
   },
 ];
+
+const mapIcon = (iconName: string): React.ReactNode => {
+  switch ((iconName || '').toLowerCase()) {
+    case 'cpu': return <Cpu size={20} />;
+    case 'network': return <Network size={20} />;
+    case 'key': return <KeyRound size={20} />;
+    case 'server': return <Server size={20} />;
+    case 'zap': return <Zap size={20} />;
+    case 'database': return <Database size={20} />;
+    case 'shield': return <ShieldCheck size={20} />;
+    default: return <Server size={20} />;
+  }
+};
+
+const mapDbNodeToArchNode = (dbNode: DbArchNode): ArchNode => {
+  return {
+    id: dbNode.id,
+    name: dbNode.name,
+    tech: dbNode.tech,
+    icon: mapIcon(dbNode.icon),
+    color: dbNode.color,
+    title: dbNode.title,
+    desc: dbNode.description,
+    flow: dbNode.flowSequence,
+    connections: dbNode.connections ? dbNode.connections.split(',').map(s => s.trim()).filter(Boolean) : [],
+  };
+};
 
 export default function ArchitectureShowcase() {
   const [activeId, setActiveId] = useState<string>('client');
   const trackAction = useTelemetryStore((state) => state.trackAction);
   const accentColor = useThemeStore((state) => state.accentColor);
 
+  const { data: dbNodesData } = useQuery<DbArchNode[]>({
+    queryKey: ['architecture'],
+    queryFn: async () => {
+      const res = await fetch(`${API_BASE}/architecture`);
+      if (!res.ok) throw new Error();
+      return res.json();
+    },
+    initialData: fallbackDbNodes,
+  });
+
+  const archNodes = (dbNodesData || fallbackDbNodes).map(mapDbNodeToArchNode);
+
   const activeNodes = React.useMemo(() => {
     return archNodes.map(node => node.id === 'gateway' ? { ...node, color: accentColor } : node);
-  }, [accentColor]);
+  }, [archNodes, accentColor]);
 
   const activeNode = activeNodes.find((n) => n.id === activeId) || activeNodes[0];
 

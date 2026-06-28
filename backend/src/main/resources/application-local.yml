@@ -21,8 +21,6 @@ spring:
       mode: never
   flyway:
     enabled: false # H2 will be managed via DDL auto-update or manual creation for easy startup.
-  cache:
-    type: simple # Uses ConcurrentHashMap-based cache rather than requiring local Redis.
 
 logging:
   level:

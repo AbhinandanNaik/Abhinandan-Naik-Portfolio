@@ -32,7 +32,7 @@ interface DBSkill {
   planetaryCoords?: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+import { API_BASE } from '@/config/api';
 
 const fallbackSkills: DBSkill[] = [
   { id: 1, name: 'Java', category: 'Backend', proficiencyLevel: 9 },

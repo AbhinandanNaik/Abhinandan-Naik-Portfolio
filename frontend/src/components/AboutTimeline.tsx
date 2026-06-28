@@ -22,7 +22,7 @@ interface DBExperience {
   description: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+import { API_BASE } from '@/config/api';
 
 const fallbackExperiences: DBExperience[] = [
   {

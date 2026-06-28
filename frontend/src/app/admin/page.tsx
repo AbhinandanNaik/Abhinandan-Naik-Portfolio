@@ -8,7 +8,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { KeyRound, ShieldAlert, BarChart3, Mail, LogOut, CheckCircle, Cpu, RefreshCw } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+import { API_BASE } from '@/config/api';
 
 export default function AdminPage() {
   const { token, isAuthenticated, login, logout } = useAuthStore();

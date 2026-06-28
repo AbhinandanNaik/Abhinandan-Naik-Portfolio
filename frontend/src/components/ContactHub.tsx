@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useTelemetryStore } from '@/store/telemetryStore';
 import { Send, CheckCircle, AlertCircle, RefreshCw } from 'lucide-react';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+import { API_BASE } from '@/config/api';
 
 export default function ContactHub() {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });

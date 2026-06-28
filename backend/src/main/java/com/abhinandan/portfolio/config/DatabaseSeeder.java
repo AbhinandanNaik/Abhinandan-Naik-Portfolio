@@ -16,6 +16,9 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final ProjectRepository projectRepository;
     private final SkillRepository skillRepository;
     private final CertificationRepository certificationRepository;
+    private final ProfileRepository profileRepository;
+    private final ArchitectureNodeRepository architectureNodeRepository;
+    private final TerminalCommandRepository terminalCommandRepository;
     private final PasswordEncoder passwordEncoder;
 
     public DatabaseSeeder(UserRepository userRepository,
@@ -23,12 +26,18 @@ public class DatabaseSeeder implements CommandLineRunner {
                           ProjectRepository projectRepository,
                           SkillRepository skillRepository,
                           CertificationRepository certificationRepository,
+                          ProfileRepository profileRepository,
+                          ArchitectureNodeRepository architectureNodeRepository,
+                          TerminalCommandRepository terminalCommandRepository,
                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.experienceRepository = experienceRepository;
         this.projectRepository = projectRepository;
         this.skillRepository = skillRepository;
         this.certificationRepository = certificationRepository;
+        this.profileRepository = profileRepository;
+        this.architectureNodeRepository = architectureNodeRepository;
+        this.terminalCommandRepository = terminalCommandRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -39,6 +48,9 @@ public class DatabaseSeeder implements CommandLineRunner {
         seedProjects();
         seedSkills();
         seedCertifications();
+        seedProfiles();
+        seedArchitectureNodes();
+        seedTerminalCommands();
     }
 
     private void seedUsers() {
@@ -141,6 +153,53 @@ public class DatabaseSeeder implements CommandLineRunner {
                     new Certification(null, "Generative AI Specialist", "Google Cloud Gen AI Academy", "2025", null, "Prompt Optimization, Cloud AI Architecture, LLM Integrations")
             ));
             System.out.println(">>> SEED: Certifications seeded.");
+        }
+    }
+
+    private void seedProfiles() {
+        if (profileRepository.count() == 0) {
+            Profile profile = Profile.builder()
+                    .name("Abhinandan Naik")
+                    .title("Backend Java Engineer & Systems Architect")
+                    .availableStatus("Available for Opportunities")
+                    .bio("Engineering scalable, high-throughput distributed architectures using Java, Spring Boot, SQL databases, and modern cloud deployment patterns. Currently engineering backend systems at Digit Insurance.")
+                    .resumeUrl("/Abhinandan_Naik_Resume.pdf")
+                    .githubUrl("https://github.com/abhinandan-naik")
+                    .linkedinUrl("https://linkedin.com/in/abhinandan-naik")
+                    .email("abhinandannaik1717@gmail.com")
+                    .build();
+            profileRepository.save(profile);
+            System.out.println(">>> SEED: Profiles seeded.");
+        }
+    }
+
+    private void seedArchitectureNodes() {
+        if (architectureNodeRepository.count() == 0) {
+            architectureNodeRepository.saveAll(Arrays.asList(
+                    new ArchitectureNode("client", "Client Layer", "React / Next.js", "cpu", "#8B5CF6", "Client Layer — React / Next.js 15", "Single-page application pre-rendered using static rendering and optimized using React 19. It serves static layout elements instantly and handles dynamic data fetching asynchronously via React Query.", "User Action ➔ Next.js client intercepts ➔ Fires AJAX request to API Gateway", "gateway"),
+                    new ArchitectureNode("gateway", "API Gateway", "Nginx Proxy", "network", "#00F5FF", "API Gateway — Nginx Reverse Proxy", "The single entry checkpoint for all web requests. Offloads SSL handshakes, strips CORS headers, and routes `/api/**` traffic directly to Spring Boot backend services.", "HTTPS Request ➔ SSL Decryption ➔ Header Sanitization ➔ Proxy Forward to Port 8888", "auth,services"),
+                    new ArchitectureNode("auth", "Auth Security", "Spring Security / JWT", "key", "#EF4444", "Authentication Service — Security Context Filter", "Stateless access authorization filter. Validates signature claims on incoming JWT tokens, handles admin credential matches via BCrypt, and injects user profiles into the Spring security context.", "Filter checks authorization header ➔ Verifies RS256 JWT key claims ➔ Sets security session", "services"),
+                    new ArchitectureNode("services", "Core Services", "Spring Boot 3.5", "server", "#6366F1", "Core Services — Spring Boot Business Logic", "Processes business models and operations. Serves projects datasets, updates blog entries, captures analytical telemetries, and handles automated rate-limiting checks.", "Processes logic ➔ Queries Redis Cache (Read-heavy) ➔ Queries Postgres (Write/Transactional)", "cache,database"),
+                    new ArchitectureNode("cache", "Cache Layer", "Redis Memory Cache", "zap", "#FBB324", "Cache Layer — Redis Memory Storage", "High-speed key-value cache. Stores frequently loaded assets and rate limit session trackers, reducing SQL fetch demands by up to 60%.", "Check cache ➔ HIT: return cached JSON ➔ MISS: fetch DB ➔ write to cache ➔ return", ""),
+                    new ArchitectureNode("database", "Database", "PostgreSQL DB", "database", "#22C55E", "Database — PostgreSQL Storage", "Persistent transactional database managed with Flyway schema versioning. Configured with optimized index tables on query slugs and composite timestamp logs.", "Spring Boot JPA leases connection ➔ Runs parameterized queries ➔ Commits transaction", "")
+            ));
+            System.out.println(">>> SEED: Architecture nodes seeded.");
+        }
+    }
+
+    private void seedTerminalCommands() {
+        if (terminalCommandRepository.count() == 0) {
+            terminalCommandRepository.saveAll(Arrays.asList(
+                    new TerminalCommand(null, "help", "accent", "Available commands:|  about      ➔ Detail developer profile|  skills     ➔ Tech stack & tool metrics|  experience ➔ Commercial work chronology|  projects   ➔ Featured engineering systems|  contact    ➔ Direct communication details|  resume     ➔ Download technical PDF CV|  clear      ➔ Wipe terminal buffer history|  easteregg  ➔ 🎯 Trigger hidden routine"),
+                    new TerminalCommand(null, "about", "success", "Name     : Abhinandan Naik|Role     : Full-Stack Software Engineer|Employer : Digit Insurance (Motor Insurance Division)|Degree   : BE (Hons.) Information Science & Engineering|Focus    : Scalable backend APIs, database tuning, and GenAI integrations|Languages: English, Hindi, Kannada|Status   : Open to full-stack software engineering engagements 🚀"),
+                    new TerminalCommand(null, "skills", "accent", "Backend  : Java, Spring Boot, Microservices, Security, REST APIs|Database : PostgreSQL, MySQL, Redis, DBeaver database tuning|DevOps   : Kubernetes, Bitbucket, Jenkins CI/CD, Dynatrace validation|Frontend : Next.js, Supabase, TypeScript, React, TailwindCSS"),
+                    new TerminalCommand(null, "experience", "secondary", "[July 2025 - Present] Software Engineer @ Digit Insurance|  ➔ Architected scalable backend APIs for Motor Loader & Single Page modules|  ➔ Implemented Redis caching for bulk policy and payment processing|  ➔ Tuned complex database schemas in PostgreSQL to ensure integrity|  ➔ Automated deployment via Bitbucket & Jenkins, microservices in Kubernetes|  ➔ Monitored endpoints using Dynatrace and contributed to Agentic AI automation"),
+                    new TerminalCommand(null, "projects", "success", "1. FlowSync ➔ AI-Powered Kanban Board (Next.js, Supabase, State Sync, AI Workflow)|2. FlashPoll ➔ Real-Time Voting Platform (Node.js, Express, Socket.io, Sessions)|3. Smart-Bin ➔ IoT Waste Manager (ESP8266, Sensor dashboard, Route optimization)"),
+                    new TerminalCommand(null, "contact", "accent", "Primary Email : abhinandannaik1717@gmail.com|LinkedIn Profile: linkedin.com/in/abhinandan-naik|GitHub Page    : github.com/abhinandan-naik|Availability   : ● ACTIVE FOR INTERVIEWS"),
+                    new TerminalCommand(null, "resume", "success", "Assembling technical credentials...|✓ Packaging latest database telemetry...|✓ Compiling PDF binary stream...|➔ Download initiated: Abhinandan_Naik_Resume.pdf 📄"),
+                    new TerminalCommand(null, "easteregg", "secondary", "  ╔══════════════════════════════════════════════╗|  ║         EASTER EGG COMPILE SUCCESS 🎉        ║|  ║                                              ║|  ║   " + "Java is to JavaScript as car is to" + "      ║|  ║    carpet.\" - Chris Heilmann                 ║|  ║                                              ║|  ║   Spring != Spring Boot                      ║|  ║   Docker != VM (Virtual Machine)             ║|  ╚══════════════════════════════════════════════╝")
+            ));
+            System.out.println(">>> SEED: Terminal commands seeded.");
         }
     }
 }

@@ -11,6 +11,58 @@ interface TermLine {
   cmd?: string;
 }
 
+import { useQuery } from '@tanstack/react-query';
+import { API_BASE } from '@/config/api';
+
+interface DbTerminalCommand {
+  commandName: string;
+  type: string;
+  responseLines: string;
+}
+
+const fallbackDbCommands: DbTerminalCommand[] = [
+  {
+    commandName: 'help',
+    type: 'accent',
+    responseLines: 'Available commands:|  about      ➔ Detail developer profile|  skills     ➔ Tech stack & tool metrics|  experience ➔ Commercial work chronology|  projects   ➔ Featured engineering systems|  contact    ➔ Direct communication details|  resume     ➔ Download technical PDF CV|  clear      ➔ Wipe terminal buffer history|  easteregg  ➔ 🎯 Trigger hidden routine'
+  },
+  {
+    commandName: 'about',
+    type: 'success',
+    responseLines: 'Name     : Abhinandan Naik|Role     : Full-Stack Software Engineer|Employer : Digit Insurance (Motor Insurance Division)|Degree   : BE (Hons.) Information Science & Engineering|Focus    : Scalable backend APIs, database tuning, and GenAI integrations|Languages: English, Hindi, Kannada|Status   : Open to full-stack software engineering engagements 🚀'
+  },
+  {
+    commandName: 'skills',
+    type: 'accent',
+    responseLines: 'Backend  : Java, Spring Boot, Microservices, Security, REST APIs|Database : PostgreSQL, MySQL, Redis, DBeaver database tuning|DevOps   : Kubernetes, Bitbucket, Jenkins CI/CD, Dynatrace validation|Frontend : Next.js, Supabase, TypeScript, React, TailwindCSS'
+  },
+  {
+    commandName: 'experience',
+    type: 'secondary',
+    responseLines: '[July 2025 - Present] Software Engineer @ Digit Insurance|  ➔ Architected scalable backend APIs for Motor Loader & Single Page modules|  ➔ Implemented Redis caching for bulk policy and payment processing|  ➔ Tuned complex database schemas in PostgreSQL to ensure integrity|  ➔ Automated deployment via Bitbucket & Jenkins, microservices in Kubernetes|  ➔ Monitored endpoints using Dynatrace and contributed to Agentic AI automation'
+  },
+  {
+    commandName: 'projects',
+    type: 'success',
+    responseLines: '1. FlowSync ➔ AI-Powered Kanban Board (Next.js, Supabase, State Sync, AI Workflow)|2. FlashPoll ➔ Real-Time Voting Platform (Node.js, Express, Socket.io, Sessions)|3. Smart-Bin ➔ IoT Waste Manager (ESP8266, Sensor dashboard, Route optimization)'
+  },
+  {
+    commandName: 'contact',
+    type: 'accent',
+    responseLines: 'Primary Email : abhinandannaik1717@gmail.com|LinkedIn Profile: linkedin.com/in/abhinandan-naik|GitHub Page    : github.com/abhinandan-naik|Availability   : ● ACTIVE FOR INTERVIEWS'
+  },
+  {
+    commandName: 'resume',
+    type: 'success',
+    responseLines: 'Assembling technical credentials...|✓ Packaging latest database telemetry...|✓ Compiling PDF binary stream...|➔ Download initiated: Abhinandan_Naik_Resume.pdf 📄'
+  },
+  {
+    commandName: 'easteregg',
+    type: 'secondary',
+    responseLines: '  ╔══════════════════════════════════════════════╗|  ║         EASTER EGG COMPILE SUCCESS 🎉        ║|  ║                                              ║|  ║   "Java is to JavaScript as car is to      ║|  ║    carpet." - Chris Heilmann                 ║|  ║                                              ║|  ║   Spring != Spring Boot                      ║|  ║   Docker != VM (Virtual Machine)             ║|  ╚══════════════════════════════════════════════╝'
+  }
+];
+
 export default function InteractiveTerminal() {
   const [history, setHistory] = useState<string[]>([]);
   const accentColor = useThemeStore((state) => state.accentColor);
@@ -26,94 +78,27 @@ export default function InteractiveTerminal() {
   const inputRef = useRef<HTMLInputElement>(null);
   const trackAction = useTelemetryStore((state) => state.trackAction);
 
-  const commandResponses: Record<string, { lines: string[]; type: TermLine['type'] }> = {
-    help: {
-      type: 'accent',
-      lines: [
-        'Available commands:',
-        '  about      ➔ Detail developer profile',
-        '  skills     ➔ Tech stack & tool metrics',
-        '  experience ➔ Commercial work chronology',
-        '  projects   ➔ Featured engineering systems',
-        '  contact    ➔ Direct communication details',
-        '  resume     ➔ Download technical PDF CV',
-        '  clear      ➔ Wipe terminal buffer history',
-        '  easteregg  ➔ 🎯 Trigger hidden routine'
-      ]
+  const { data: dbCommandsData } = useQuery<DbTerminalCommand[]>({
+    queryKey: ['terminal'],
+    queryFn: async () => {
+      const res = await fetch(`${API_BASE}/terminal`);
+      if (!res.ok) throw new Error();
+      return res.json();
     },
-    about: {
-      type: 'success',
-      lines: [
-        'Name     : Abhinandan Naik',
-        'Role     : Full-Stack Software Engineer',
-        'Employer : Digit Insurance (Motor Insurance Division)',
-        'Degree   : BE (Hons.) Information Science & Engineering',
-        'Focus    : Scalable backend APIs, database tuning, and GenAI integrations',
-        'Languages: English, Hindi, Kannada',
-        'Status   : Open to full-stack software engineering engagements 🚀'
-      ]
-    },
-    skills: {
-      type: 'accent',
-      lines: [
-        'Backend  : Java, Spring Boot, Microservices, Security, REST APIs',
-        'Database : PostgreSQL, MySQL, Redis, DBeaver database tuning',
-        'DevOps   : Kubernetes, Bitbucket, Jenkins CI/CD, Dynatrace validation',
-        'Frontend : Next.js, Supabase, TypeScript, React, TailwindCSS'
-      ]
-    },
-    experience: {
-      type: 'secondary',
-      lines: [
-        '[July 2025 - Present] Software Engineer @ Digit Insurance',
-        '  ➔ Architected scalable backend APIs for Motor Loader & Single Page modules',
-        '  ➔ Implemented Redis caching for bulk policy and payment processing',
-        '  ➔ Tuned complex database schemas in PostgreSQL to ensure integrity',
-        '  ➔ Automated deployment via Bitbucket & Jenkins, microservices in Kubernetes',
-        '  ➔ Monitored endpoints using Dynatrace and contributed to Agentic AI automation'
-      ]
-    },
-    projects: {
-      type: 'success',
-      lines: [
-        '1. FlowSync ➔ AI-Powered Kanban Board (Next.js, Supabase, State Sync, AI Workflow)',
-        '2. FlashPoll ➔ Real-Time Voting Platform (Node.js, Express, Socket.io, Sessions)',
-        '3. Smart-Bin ➔ IoT Waste Manager (ESP8266, Sensor dashboard, Route optimization)'
-      ]
-    },
-    contact: {
-      type: 'accent',
-      lines: [
-        'Primary Email : abhinandannaik1717@gmail.com',
-        'LinkedIn Profile: linkedin.com/in/abhinandan-naik',
-        'GitHub Page    : github.com/abhinandan-naik',
-        'Availability   : ● ACTIVE FOR INTERVIEWS'
-      ]
-    },
-    resume: {
-      type: 'success',
-      lines: [
-        'Assembling technical credentials...',
-        '✓ Packaging latest database telemetry...',
-        '✓ Compiling PDF binary stream...',
-        '➔ Download initiated: Abhinandan_Naik_Resume.pdf 📄'
-      ]
-    },
-    easteregg: {
-      type: 'secondary',
-      lines: [
-        '  ╔══════════════════════════════════════════════╗',
-        '  ║         EASTER EGG COMPILE SUCCESS 🎉        ║',
-        '  ║                                              ║',
-        '  ║   "Java is to JavaScript as car is to      ║',
-        '  ║    carpet." - Chris Heilmann                 ║',
-        '  ║                                              ║',
-        '  ║   Spring != Spring Boot                      ║',
-        '  ║   Docker != VM (Virtual Machine)             ║',
-        '  ╚══════════════════════════════════════════════╝'
-      ]
-    }
-  };
+    initialData: fallbackDbCommands,
+  });
+
+  const commandResponses = React.useMemo(() => {
+    const responses: Record<string, { lines: string[]; type: TermLine['type'] }> = {};
+    const activeData = dbCommandsData && dbCommandsData.length > 0 ? dbCommandsData : fallbackDbCommands;
+    activeData.forEach((cmd) => {
+      responses[cmd.commandName.toLowerCase()] = {
+        type: cmd.type as TermLine['type'],
+        lines: cmd.responseLines ? cmd.responseLines.split('|') : [],
+      };
+    });
+    return responses;
+  }, [dbCommandsData]);
 
   // Scroll terminal to bottom on line update
   useEffect(() => {

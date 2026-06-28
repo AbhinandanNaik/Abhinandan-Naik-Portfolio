@@ -149,16 +149,46 @@ function Spotlights() {
 }
 
 // Floating tech stack nodes (Holograms)
-function TechHolograms() {
+interface Skill {
+  name: string;
+  category: string;
+  proficiencyLevel: number;
+  planetaryCoords: string;
+}
+
+function TechHolograms({ skills }: { skills: Skill[] }) {
   const accentColor = useThemeStore((state) => state.accentColor);
-  const techs = [
-    { text: 'Java 21', pos: [-4.2, 2.6, -5], color: '#E76F51' },
-    { text: 'Spring Boot', pos: [3.8, 3.4, -6], color: '#22C55E' },
-    { text: 'PostgreSQL', pos: [-5.2, 0.8, -8], color: accentColor },
-    { text: 'Docker', pos: [5.2, 1.4, -4], color: '#2496ED' },
-    { text: 'AWS Cloud', pos: [-1.8, 3.9, -7], color: '#FF9900' },
-    { text: 'Microservices', pos: [1.8, -0.4, -5], color: '#8B5CF6' }
+  
+  const defaultColors = ['#E76F51', '#22C55E', '#2496ED', '#FF9900', '#8B5CF6', '#00F5FF'];
+  const fixedPositions: [number, number, number][] = [
+    [-4.2, 2.6, -5],
+    [3.8, 3.4, -6],
+    [-5.2, 0.8, -8],
+    [5.2, 1.4, -4],
+    [-1.8, 3.9, -7],
+    [1.8, -0.4, -5]
   ];
+
+  const techs = (skills || []).slice(0, 6).map((skill, index) => {
+    let pos = fixedPositions[index] || [0, 0, 0];
+    if (skill.planetaryCoords) {
+      const parts = skill.planetaryCoords.split(',').map(Number);
+      if (parts.length === 3 && !parts.some(isNaN)) {
+        pos = [parts[0] * 5.5, parts[1] * 3.8, parts[2] * 7.5];
+      }
+    }
+    
+    let color = defaultColors[index % defaultColors.length];
+    if (skill.category === 'Database') {
+      color = accentColor;
+    }
+    
+    return {
+      text: skill.name,
+      pos,
+      color
+    };
+  });
 
   return (
     <group>
@@ -266,6 +296,40 @@ function CameraController() {
 
 // ─── MAIN HERO VIEWPORT ─────────────────────────────────────
 
+import { useQuery } from '@tanstack/react-query';
+import { API_BASE } from '@/config/api';
+
+interface Profile {
+  name: string;
+  title: string;
+  availableStatus: string;
+  bio: string;
+  resumeUrl: string;
+  githubUrl: string;
+  linkedinUrl: string;
+  email: string;
+}
+
+const fallbackProfile: Profile = {
+  name: "Abhinandan Naik",
+  title: "Backend Java Engineer & Systems Architect",
+  availableStatus: "Available for Opportunities",
+  bio: "Engineering scalable, high-throughput distributed architectures using Java, Spring Boot, SQL databases, and modern cloud deployment patterns. Currently engineering backend systems at Digit Insurance.",
+  resumeUrl: "/Abhinandan_Naik_Resume.pdf",
+  githubUrl: "https://github.com/abhinandan-naik",
+  linkedinUrl: "https://linkedin.com/in/abhinandan-naik",
+  email: "abhinandannaik1717@gmail.com"
+};
+
+const fallbackSkills: Skill[] = [
+  { name: 'Java 21', category: 'Backend', proficiencyLevel: 9, planetaryCoords: '0.5,0.8,-0.2' },
+  { name: 'Spring Boot', category: 'Backend', proficiencyLevel: 9, planetaryCoords: '-0.4,0.9,0.3' },
+  { name: 'PostgreSQL', category: 'Database', proficiencyLevel: 8, planetaryCoords: '-0.7,-0.4,0.6' },
+  { name: 'Docker', category: 'Cloud', proficiencyLevel: 8, planetaryCoords: '0.3,-0.5,0.7' },
+  { name: 'AWS Cloud', category: 'Cloud', proficiencyLevel: 8, planetaryCoords: '-1.8,3.9,-7' },
+  { name: 'Microservices', category: 'Backend', proficiencyLevel: 8, planetaryCoords: '1.8,-0.4,-5' }
+];
+
 export default function Hero3D() {
   const [mounted, setMounted] = useState(false);
   const trackAction = useTelemetryStore((state) => state.trackAction);
@@ -274,6 +338,29 @@ export default function Hero3D() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const { data: profileData } = useQuery<Profile>({
+    queryKey: ['profile'],
+    queryFn: async () => {
+      const res = await fetch(`${API_BASE}/profile`);
+      if (!res.ok) throw new Error();
+      return res.json();
+    },
+    initialData: fallbackProfile,
+  });
+
+  const { data: skillsData } = useQuery<Skill[]>({
+    queryKey: ['skills'],
+    queryFn: async () => {
+      const res = await fetch(`${API_BASE}/skills`);
+      if (!res.ok) throw new Error();
+      return res.json();
+    },
+    initialData: fallbackSkills,
+  });
+
+  const profile = profileData || fallbackProfile;
+  const skills = skillsData || fallbackSkills;
 
   const handleActionClick = (action: string, targetId: string) => {
     trackAction(action);
@@ -286,8 +373,8 @@ export default function Hero3D() {
   const handleResumeDownload = () => {
     trackAction('DOWNLOAD_RESUME');
     const link = document.createElement('a');
-    link.href = '/Abhinandan_Naik_Resume.pdf';
-    link.download = 'Abhinandan_Naik_Resume.pdf';
+    link.href = profile.resumeUrl || '/Abhinandan_Naik_Resume.pdf';
+    link.download = (profile.resumeUrl || '/Abhinandan_Naik_Resume.pdf').split('/').pop() || 'Resume.pdf';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -315,7 +402,7 @@ export default function Hero3D() {
             <CityFloor />
             <Buildings />
             <Spotlights />
-            <TechHolograms />
+            <TechHolograms skills={skills} />
             <CameraController />
           </Canvas>
         )}
@@ -325,22 +412,22 @@ export default function Hero3D() {
       <div className="relative z-10 max-w-4xl text-center select-text">
         <div className="inline-flex items-center gap-2 bg-accent/8 border border-accent/20 px-4 py-1.5 rounded-full mb-6 text-[10px] md:text-xs text-accent font-mono tracking-widest uppercase">
           <span className="w-2 h-2 rounded-full bg-highlight animate-ping"></span>
-          Available for Opportunities
+          {profile.availableStatus}
         </div>
 
         <h1 className="text-5xl md:text-8xl font-black tracking-tighter mb-4 uppercase leading-none select-none text-white">
-          Abhinandan <br className="md:hidden" />
+          {profile.name.split(' ')[0]} <br className="md:hidden" />
           <span className="bg-gradient-to-r from-accent via-secondary to-[#FBB324] bg-clip-text text-transparent">
-            Naik
+            {profile.name.split(' ').slice(1).join(' ')}
           </span>
         </h1>
 
         <p className="text-xs md:text-sm font-light text-muted uppercase tracking-widest mb-6">
-          Backend Java Engineer & Systems Architect
+          {profile.title}
         </p>
 
         <p className="max-w-xl mx-auto text-sm md:text-base text-muted/80 leading-relaxed font-light mb-12">
-          Engineering scalable, high-throughput distributed architectures using Java, Spring Boot, SQL databases, and modern cloud deployment patterns. Currently engineering backend systems at <span className="text-secondary font-medium">Digit Insurance</span>.
+          {profile.bio}
         </p>
 
         {/* Buttons */}
