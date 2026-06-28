@@ -3,6 +3,8 @@ package com.abhinandan.portfolio.controller;
 import com.abhinandan.portfolio.model.Project;
 import com.abhinandan.portfolio.repository.ProjectRepository;
 import jakarta.validation.Valid;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,7 @@ public class ProjectController {
     }
 
     @GetMapping
+    @Cacheable(value = "projects")
     public List<Project> getAllProjects() {
         return projectRepository.findAll();
     }
@@ -32,11 +35,13 @@ public class ProjectController {
     }
 
     @PostMapping
+    @CacheEvict(value = "projects", allEntries = true)
     public Project createProject(@Valid @RequestBody Project project) {
         return projectRepository.save(project);
     }
 
     @PutMapping("/{id}")
+    @CacheEvict(value = "projects", allEntries = true)
     public ResponseEntity<Project> updateProject(@PathVariable Long id, @Valid @RequestBody Project projectDetails) {
         return projectRepository.findById(id)
                 .map(project -> {
@@ -56,6 +61,7 @@ public class ProjectController {
     }
 
     @DeleteMapping("/{id}")
+    @CacheEvict(value = "projects", allEntries = true)
     public ResponseEntity<?> deleteProject(@PathVariable Long id) {
         return projectRepository.findById(id)
                 .map(project -> {

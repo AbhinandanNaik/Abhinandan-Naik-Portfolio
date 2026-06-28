@@ -3,6 +3,7 @@
 import React from 'react';
 import { Briefcase, GraduationCap, Code } from 'lucide-react';
 import { useThemeStore } from '@/store/themeStore';
+import { useQuery } from '@tanstack/react-query';
 
 interface TimelineItem {
   year: string;
@@ -13,18 +14,50 @@ interface TimelineItem {
   color: string;
 }
 
+interface DBExperience {
+  id: number;
+  role: string;
+  company: string;
+  period: string;
+  description: string;
+}
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+
+const fallbackExperiences: DBExperience[] = [
+  {
+    id: 1,
+    role: 'Software Engineer',
+    company: 'Digit Insurance (Motor Insurance)',
+    period: 'July 2025 — Present',
+    description: 'Architected and deployed scalable backend services for Motor Loader and Single Page modules. Integrated Redis caching for bulk policy ingestion, optimized PostgreSQL schemas, automated deployment pipelines via Jenkins/Bitbucket, and monitored endpoints with Dynatrace.',
+  }
+];
+
 export default function AboutTimeline() {
   const accentColor = useThemeStore((state) => state.accentColor);
-  
-  const milestones: TimelineItem[] = [
-    {
-      year: 'JULY 2025 — PRESENT',
-      role: 'Software Engineer',
-      org: 'Digit Insurance (Motor Insurance)',
-      desc: 'Architected and deployed scalable backend services for Motor Loader and Single Page modules. Integrated Redis caching for bulk policy ingestion, optimized PostgreSQL schemas, automated deployment pipelines via Jenkins/Bitbucket, and monitored endpoints with Dynatrace.',
-      icon: <Briefcase size={16} />,
-      color: accentColor,
+
+  const { data: dbExperiences = [] } = useQuery<DBExperience[]>({
+    queryKey: ['experiences'],
+    queryFn: async () => {
+      const response = await fetch(`${API_BASE}/experiences`);
+      if (!response.ok) throw new Error('API fetch failed');
+      return response.json();
     },
+  });
+
+  const activeExperiences = dbExperiences.length > 0 ? dbExperiences : fallbackExperiences;
+
+  const parsedExperiences: TimelineItem[] = activeExperiences.map((exp) => ({
+    year: exp.period.toUpperCase(),
+    role: exp.role,
+    org: exp.company,
+    desc: exp.description,
+    icon: <Briefcase size={16} />,
+    color: accentColor,
+  }));
+
+  const staticMilestones: TimelineItem[] = [
     {
       year: 'JAN 2022 — JUNE 2025',
       role: 'BE (Hons.) Information Science & Engineering',
@@ -42,6 +75,8 @@ export default function AboutTimeline() {
       color: '#22C55E',
     },
   ];
+
+  const milestones = [...parsedExperiences, ...staticMilestones];
 
   return (
     <section id="about" className="relative py-24 px-6 md:px-12 max-w-6xl mx-auto w-full">

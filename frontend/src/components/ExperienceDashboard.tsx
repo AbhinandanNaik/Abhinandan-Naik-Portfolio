@@ -18,23 +18,68 @@ interface LoggingLine {
   msg: string;
 }
 
+import { useQuery } from '@tanstack/react-query';
+
+interface DBExperience {
+  id: number;
+  role: string;
+  company: string;
+  period: string;
+  description: string;
+  highlights: string;
+}
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+
+const fallbackExperiences: DBExperience[] = [
+  {
+    id: 1,
+    role: 'Backend Java Developer',
+    company: 'Digit Insurance',
+    period: '2024 — PRESENT',
+    description: 'Engineering high-availability backend solutions that handle insurance transactions. Responsible for design, database migration scripts, API gateway security layers, and service dockerization templates.',
+    highlights: '🔌 API Development: Designed and deployed RESTful APIs using Spring Boot, handling high-volume policy purchase and claim workflows.|🗄️ Database Optimization: Audited slow PostgreSQL statements, writing indexing policies and schema tuning to drop response delays.|🔒 Security Engineering: Structured spring-security filters applying JWT validations and role constraints across admin operations.|🐳 Containerization: Dockerized microservice artifacts, creating GitHub Actions recipes for building and staging image releases.'
+  }
+];
+
 export default function ExperienceDashboard() {
   const [logs, setLogs] = useState<LoggingLine[]>([]);
   const logContainerRef = useRef<HTMLDivElement>(null);
   const accentColor = useThemeStore((state) => state.accentColor);
+
+  const { data: dbExperiences = fallbackExperiences } = useQuery<DBExperience[]>({
+    queryKey: ['experiences'],
+    queryFn: async () => {
+      const response = await fetch(`${API_BASE}/experiences`);
+      if (!response.ok) throw new Error('API fetch failed');
+      return response.json();
+    },
+  });
+
+  const activeExp = dbExperiences.find(exp => exp.company.toLowerCase().includes('digit')) || dbExperiences[0] || fallbackExperiences[0];
+
+  const highlights = React.useMemo(() => {
+    if (!activeExp.highlights) return [];
+    return activeExp.highlights.split('|').map((part) => {
+      const colonIndex = part.indexOf(':');
+      if (colonIndex !== -1) {
+        return {
+          title: part.substring(0, colonIndex).trim(),
+          desc: part.substring(colonIndex + 1).trim()
+        };
+      }
+      return {
+        title: part.trim(),
+        desc: ''
+      };
+    });
+  }, [activeExp]);
 
   const metrics: MetricItem[] = [
     { name: 'APIs', value: '1.2M/day', label: 'Throughput Handled', icon: <Cpu size={16} />, color: accentColor },
     { name: 'DBs', value: '-42%', label: 'Response Latency', icon: <Database size={16} />, color: '#22C55E' },
     { name: 'Uptime', value: '99.98%', label: 'Service SLA', icon: <Server size={16} />, color: '#8B5CF6' },
     { name: 'Security', value: '0 Audits', label: 'CVE Violations', icon: <ShieldAlert size={16} />, color: '#EF4444' }
-  ];
-
-  const highlights = [
-    { title: '🔌 API Development', desc: 'Designed and deployed RESTful APIs using Spring Boot, handling high-volume policy purchase and claim workflows.' },
-    { title: '🗄️ Database Optimization', desc: 'Audited slow PostgreSQL statements, writing indexing policies and schema tuning to drop response delays.' },
-    { title: '🔒 Security Engineering', desc: 'Structured spring-security filters applying JWT validations and role constraints across admin operations.' },
-    { title: '🐳 Containerization', desc: 'Dockerized microservice artifacts, creating GitHub Actions recipes for building and staging image releases.' }
   ];
 
   // Live log lines simulation
@@ -101,16 +146,16 @@ export default function ExperienceDashboard() {
             
             <div className="flex items-start justify-between flex-wrap gap-4 mb-4">
               <div>
-                <h3 className="text-xl font-bold text-white font-mono">Backend Java Developer</h3>
-                <div className="text-xs text-accent font-mono mt-0.5">Digit Insurance · Core Division</div>
+                <h3 className="text-xl font-bold text-white font-mono">{activeExp.role}</h3>
+                <div className="text-xs text-accent font-mono mt-0.5">{activeExp.company} · Core Division</div>
               </div>
               <span className="text-[10px] font-mono bg-secondary/15 border border-secondary/30 text-secondary px-3 py-1 rounded">
-                2024 — PRESENT
+                {activeExp.period.toUpperCase()}
               </span>
             </div>
 
             <p className="text-muted text-xs md:text-sm leading-relaxed font-light mb-6">
-              Engineering high-availability backend solutions that handle insurance transactions. Responsible for design, database migration scripts, API gateway security layers, and service dockerization templates.
+              {activeExp.description}
             </p>
 
             {/* highlights grid */}

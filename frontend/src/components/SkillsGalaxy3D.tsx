@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { useTelemetryStore } from '@/store/telemetryStore';
 import { useThemeStore } from '@/store/themeStore';
 import { Sparkles, Milestone, Award, X } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 
 // ─── TYPES ──────────────────────────────────────────────────
 
@@ -23,9 +24,35 @@ interface SkillCategory {
   moons: string[]; // Sub-skills represented as orbiting moons
 }
 
-// ─── GALAXY DATA ────────────────────────────────────────────
+interface DBSkill {
+  id: number;
+  name: string;
+  category: string;
+  proficiencyLevel: number;
+  planetaryCoords?: string;
+}
 
-const categories: SkillCategory[] = [
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+
+const fallbackSkills: DBSkill[] = [
+  { id: 1, name: 'Java', category: 'Backend', proficiencyLevel: 9 },
+  { id: 2, name: 'Spring Boot', category: 'Backend', proficiencyLevel: 9 },
+  { id: 3, name: 'Microservices', category: 'Backend', proficiencyLevel: 8 },
+  { id: 4, name: 'PostgreSQL', category: 'Database', proficiencyLevel: 8 },
+  { id: 5, name: 'MySQL', category: 'Database', proficiencyLevel: 7 },
+  { id: 6, name: 'Redis', category: 'Database', proficiencyLevel: 8 },
+  { id: 7, name: 'Next.js', category: 'Frontend', proficiencyLevel: 8 },
+  { id: 8, name: 'React', category: 'Frontend', proficiencyLevel: 8 },
+  { id: 9, name: 'TypeScript', category: 'Frontend', proficiencyLevel: 8 },
+  { id: 10, name: 'Kubernetes', category: 'Cloud', proficiencyLevel: 8 },
+  { id: 11, name: 'Docker', category: 'Cloud', proficiencyLevel: 8 },
+  { id: 12, name: 'Jenkins', category: 'Tools', proficiencyLevel: 8 },
+  { id: 13, name: 'Bitbucket', category: 'Tools', proficiencyLevel: 8 },
+  { id: 14, name: 'Dynatrace', category: 'Tools', proficiencyLevel: 8 },
+  { id: 15, name: 'System Design', category: 'Architecture', proficiencyLevel: 8 }
+];
+
+const BASE_CATEGORIES = [
   {
     id: 'backend',
     name: 'Backend / Core',
@@ -33,10 +60,8 @@ const categories: SkillCategory[] = [
     color: '#00F5FF',
     radius: 2.5,
     speed: 0.22,
-    technologies: ['Java 21', 'Spring Boot 3.5', 'Spring Security', 'Hibernate/JPA', 'JWT Auth', 'Maven'],
     projects: ['TrackWise Asset System', 'Digit core integrations'],
     icon: '☕',
-    moons: ['Java', 'Boot', 'JPA'],
   },
   {
     id: 'frontend',
@@ -45,10 +70,8 @@ const categories: SkillCategory[] = [
     color: '#8B5CF6',
     radius: 3.8,
     speed: 0.16,
-    technologies: ['React 19', 'Next.js 15', 'TypeScript', 'TailwindCSS', 'Framer Motion', 'Zustand'],
     projects: ['TrackWise Dashboard', 'Personal 3D HQ'],
     icon: '⚛️',
-    moons: ['Next', 'TS', 'Motion'],
   },
   {
     id: 'databases',
@@ -57,10 +80,8 @@ const categories: SkillCategory[] = [
     color: '#22C55E',
     radius: 5.0,
     speed: 0.11,
-    technologies: ['PostgreSQL', 'MySQL', 'Redis', 'Flyway migrations', 'SQL query optimizations'],
     projects: ['TrackWise DB Schema', 'Digit DB audits'],
     icon: '🗄️',
-    moons: ['PG', 'Redis', 'SQL'],
   },
   {
     id: 'cloud',
@@ -69,10 +90,8 @@ const categories: SkillCategory[] = [
     color: '#FBB324',
     radius: 6.2,
     speed: 0.08,
-    technologies: ['AWS EC2', 'AWS S3', 'CloudFront CDN', 'Route 53', 'Nginx proxying'],
     projects: ['AWS platform orchestration', 'Nginx proxy setups'],
     icon: '☁️',
-    moons: ['EC2', 'S3', 'Nginx'],
   },
   {
     id: 'devops',
@@ -81,10 +100,8 @@ const categories: SkillCategory[] = [
     color: '#EF4444',
     radius: 7.4,
     speed: 0.06,
-    technologies: ['Docker', 'Docker Compose', 'GitHub Actions CI/CD', 'Git/GitHub', 'Prometheus', 'Grafana'],
     projects: ['Automated CI/CD pipelines', 'Telemetry scraper containers'],
     icon: '🔧',
-    moons: ['Docker', 'CI/CD', 'Git'],
   },
   {
     id: 'architecture',
@@ -93,10 +110,8 @@ const categories: SkillCategory[] = [
     color: '#6366F1',
     radius: 8.6,
     speed: 0.04,
-    technologies: ['Microservices', 'API Gateway patterns', 'Distributed Caching', 'System Design'],
     projects: ['Smart Bin waste monitoring', 'TrackWise decoupled gateway'],
     icon: '🏗️',
-    moons: ['System', 'Gateway', 'Caching'],
   },
 ];
 
@@ -268,8 +283,12 @@ function PlanetNode({ cat, onSelect, activeId }: PlanetNodeProps) {
   );
 }
 
+interface OrbitRingsProps {
+  categories: SkillCategory[];
+}
+
 // Fixed orbit lines for alignment
-function OrbitRings() {
+function OrbitRings({ categories }: OrbitRingsProps) {
   const accentColor = useThemeStore((state) => state.accentColor);
   return (
     <group>
@@ -341,14 +360,48 @@ export default function SkillsGalaxy3D() {
     setMounted(true);
   }, []);
 
+  const { data: dbSkills = fallbackSkills } = useQuery<DBSkill[]>({
+    queryKey: ['skills'],
+    queryFn: async () => {
+      const response = await fetch(`${API_BASE}/skills`);
+      if (!response.ok) throw new Error('API fetch failed');
+      return response.json();
+    },
+  });
+
   const activeCategories = React.useMemo(() => {
-    return categories.map(cat => cat.id === 'backend' ? { ...cat, color: accentColor } : cat);
-  }, [accentColor]);
+    return BASE_CATEGORIES.map((base) => {
+      const categoryMap: { [key: string]: string } = {
+        backend: 'Backend',
+        frontend: 'Frontend',
+        databases: 'Database',
+        cloud: 'Cloud',
+        devops: 'Tools',
+        architecture: 'Architecture',
+      };
+      const matchedCategoryName = categoryMap[base.id] || base.name;
+      const categorySkills = dbSkills.filter(
+        (s) => s.category.toLowerCase() === matchedCategoryName.toLowerCase() || s.category.toLowerCase() === base.id.toLowerCase()
+      );
+      
+      const technologies = categorySkills.map((s) => s.name);
+      const moons = categorySkills.slice(0, 3).map((s) => {
+        return s.name.length > 10 ? s.name.split(' ')[0] : s.name;
+      });
+
+      return {
+        ...base,
+        color: base.id === 'backend' ? accentColor : base.color,
+        technologies: technologies.length > 0 ? technologies : base.id === 'backend' ? ['Java 21', 'Spring Boot 3.5', 'Spring Security', 'Hibernate/JPA', 'JWT Auth', 'Maven'] : [],
+        moons: moons.length > 0 ? moons : base.id === 'backend' ? ['Java', 'Boot', 'JPA'] : [],
+      };
+    });
+  }, [dbSkills, accentColor]);
 
   const activeSelectedCat = React.useMemo(() => {
     if (!selectedCat) return null;
-    return selectedCat.id === 'backend' ? { ...selectedCat, color: accentColor } : selectedCat;
-  }, [selectedCat, accentColor]);
+    return activeCategories.find((cat) => cat.id === selectedCat.id) || null;
+  }, [selectedCat, activeCategories]);
 
   const handleSelectPlanet = (cat: SkillCategory) => {
     trackAction('SELECT_SKILL_PLANET', cat.name);
@@ -389,7 +442,7 @@ export default function SkillsGalaxy3D() {
               </mesh>
 
               <GalacticCoreParticles />
-              <OrbitRings />
+              <OrbitRings categories={activeCategories} />
               <CameraController selectedPlanet={activeSelectedCat} />
               
               {activeCategories.map((cat) => (

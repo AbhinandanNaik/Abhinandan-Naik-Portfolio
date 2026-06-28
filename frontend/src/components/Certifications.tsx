@@ -1,49 +1,77 @@
 'use client';
 
 import React from 'react';
-import { Award, ShieldCheck, Link2 } from 'lucide-react';
+import { ShieldCheck, Link2 } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 
-interface CertItem {
+interface DBCertification {
   id: number;
   name: string;
-  org: string;
-  date: string;
-  url?: string;
-  skills: string;
-  icon: string;
+  organization: string;
+  issueDate: string;
+  verificationUrl?: string;
+  skillsGained?: string;
 }
 
-const certs: CertItem[] = [
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+
+const fallbackCerts: DBCertification[] = [
   {
     id: 1,
     name: 'AWS Cloud Practitioner',
-    org: 'Amazon Web Services',
-    date: 'Issued 2024',
-    url: 'https://aws.amazon.com/verification',
-    skills: 'Cloud Infrastructure · EC2 · S3 · CloudFront',
-    icon: '☁️',
+    organization: 'Amazon Web Services',
+    issueDate: 'Issued 2024',
+    verificationUrl: 'https://aws.amazon.com/verification',
+    skillsGained: 'Cloud Infrastructure · EC2 · S3 · CloudFront',
   },
   {
     id: 2,
     name: 'Spring Boot Microservices',
-    org: 'Udemy / Spring.io',
-    date: 'Issued 2024',
-    url: 'https://www.credly.com/org/udemy/badge/spring-boot-microservices',
-    skills: 'Spring Security · Caching · Configuration Profiles',
-    icon: '☕',
+    organization: 'Udemy / Spring.io',
+    issueDate: 'Issued 2024',
+    verificationUrl: 'https://www.credly.com/org/udemy/badge/spring-boot-microservices',
+    skillsGained: 'Spring Security · Caching · Configuration Profiles',
   },
   {
     id: 3,
     name: 'Docker & Kubernetes',
-    org: 'DevOps Track',
-    date: 'Issued 2023',
-    url: 'https://www.credly.com/org/docker/badge/docker-kubernetes',
-    skills: 'Containers · Images · Orchestration · Volumes',
-    icon: '🐳',
+    organization: 'DevOps Track',
+    issueDate: 'Issued 2023',
+    verificationUrl: 'https://www.credly.com/org/docker/badge/docker-kubernetes',
+    skillsGained: 'Containers · Images · Orchestration · Volumes',
   },
 ];
 
+const getCertIcon = (name: string, org: string) => {
+  const normalized = (name + ' ' + org).toLowerCase();
+  if (normalized.includes('aws') || normalized.includes('cloud')) return '☁️';
+  if (normalized.includes('spring') || normalized.includes('java') || normalized.includes('hibernate') || normalized.includes('jpa')) return '☕';
+  if (normalized.includes('docker') || normalized.includes('kubernetes') || normalized.includes('devops') || normalized.includes('containers')) return '🐳';
+  if (normalized.includes('ai') || normalized.includes('generative') || normalized.includes('llm') || normalized.includes('google')) return '🤖';
+  if (normalized.includes('algorithm') || normalized.includes('leetcode') || normalized.includes('problem solving')) return '🔢';
+  return '🏅';
+};
+
 export default function Certifications() {
+  const { data: dbCerts = fallbackCerts } = useQuery<DBCertification[]>({
+    queryKey: ['certifications'],
+    queryFn: async () => {
+      const response = await fetch(`${API_BASE}/certifications`);
+      if (!response.ok) throw new Error('API fetch failed');
+      return response.json();
+    },
+  });
+
+  const certs = dbCerts.map((c) => ({
+    id: c.id,
+    name: c.name,
+    org: c.organization,
+    date: c.issueDate.startsWith('Issued') || c.issueDate.includes('202') ? c.issueDate : `Issued ${c.issueDate}`,
+    url: c.verificationUrl,
+    skills: c.skillsGained || '',
+    icon: getCertIcon(c.name, c.organization),
+  }));
+
   return (
     <section id="certifications" className="relative py-24 px-6 md:px-12 bg-bg max-w-6xl mx-auto w-full">
       <div className="text-secondary font-mono text-xs tracking-widest uppercase mb-2">

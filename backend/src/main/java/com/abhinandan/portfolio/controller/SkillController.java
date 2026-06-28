@@ -3,6 +3,8 @@ package com.abhinandan.portfolio.controller;
 import com.abhinandan.portfolio.model.Skill;
 import com.abhinandan.portfolio.repository.SkillRepository;
 import jakarta.validation.Valid;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,16 +22,19 @@ public class SkillController {
     }
 
     @GetMapping
+    @Cacheable(value = "skills")
     public List<Skill> getAllSkills() {
         return skillRepository.findAll();
     }
 
     @PostMapping
+    @CacheEvict(value = "skills", allEntries = true)
     public Skill createSkill(@Valid @RequestBody Skill skill) {
         return skillRepository.save(skill);
     }
 
     @PutMapping("/{id}")
+    @CacheEvict(value = "skills", allEntries = true)
     public ResponseEntity<Skill> updateSkill(@PathVariable Long id, @Valid @RequestBody Skill skillDetails) {
         return skillRepository.findById(id)
                 .map(skill -> {
@@ -43,6 +48,7 @@ public class SkillController {
     }
 
     @DeleteMapping("/{id}")
+    @CacheEvict(value = "skills", allEntries = true)
     public ResponseEntity<?> deleteSkill(@PathVariable Long id) {
         return skillRepository.findById(id)
                 .map(skill -> {

@@ -3,6 +3,8 @@ package com.abhinandan.portfolio.controller;
 import com.abhinandan.portfolio.model.Blog;
 import com.abhinandan.portfolio.repository.BlogRepository;
 import jakarta.validation.Valid;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,7 @@ public class BlogController {
     }
 
     @GetMapping
+    @Cacheable(value = "blogs")
     public List<Blog> getPublishedBlogs() {
         return blogRepository.findByPublishedTrueOrderByCreatedAtDesc();
     }
@@ -37,11 +40,13 @@ public class BlogController {
     }
 
     @PostMapping
+    @CacheEvict(value = "blogs", allEntries = true)
     public Blog createBlog(@Valid @RequestBody Blog blog) {
         return blogRepository.save(blog);
     }
 
     @PutMapping("/{id}")
+    @CacheEvict(value = "blogs", allEntries = true)
     public ResponseEntity<Blog> updateBlog(@PathVariable Long id, @Valid @RequestBody Blog blogDetails) {
         return blogRepository.findById(id)
                 .map(blog -> {
@@ -58,6 +63,7 @@ public class BlogController {
     }
 
     @DeleteMapping("/{id}")
+    @CacheEvict(value = "blogs", allEntries = true)
     public ResponseEntity<?> deleteBlog(@PathVariable Long id) {
         return blogRepository.findById(id)
                 .map(blog -> {

@@ -69,6 +69,27 @@ export default function AdminPage() {
     },
   });
 
+  // Cache clear mutation
+  const clearCacheMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`${API_BASE}/admin/cache/clear`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!res.ok) throw new Error('Failed to flush caches');
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries();
+      alert('All backend caches flushed successfully!');
+    },
+    onError: () => {
+      alert('Failed to flush backend cache. Make sure the server is online.');
+    }
+  });
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!usernameInput || !passwordInput) return;
@@ -197,13 +218,25 @@ export default function AdminPage() {
           <div className="text-[10px] text-accent font-mono tracking-widest uppercase mt-0.5">// Welcome back, System Admin</div>
         </div>
 
-        <button
-          onClick={logout}
-          className="border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white px-4 py-1.5 rounded font-mono text-xs tracking-wider transition-all cursor-pointer flex items-center gap-1.5"
-        >
-          <LogOut size={12} />
-          Logout
-        </button>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => clearCacheMutation.mutate()}
+            disabled={clearCacheMutation.isPending}
+            className="border border-accent/30 text-accent hover:bg-accent hover:text-bg px-4 py-1.5 rounded font-mono text-xs tracking-wider transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+            style={{ borderColor: accentColor + '40', color: accentColor }}
+          >
+            <RefreshCw size={12} className={clearCacheMutation.isPending ? 'animate-spin' : ''} />
+            Flush System Cache
+          </button>
+
+          <button
+            onClick={logout}
+            className="border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white px-4 py-1.5 rounded font-mono text-xs tracking-wider transition-all cursor-pointer flex items-center gap-1.5"
+          >
+            <LogOut size={12} />
+            Logout
+          </button>
+        </div>
       </div>
 
       {/* Analytics KPI Counters */}

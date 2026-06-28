@@ -3,6 +3,8 @@ package com.abhinandan.portfolio.controller;
 import com.abhinandan.portfolio.model.Certification;
 import com.abhinandan.portfolio.repository.CertificationRepository;
 import jakarta.validation.Valid;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,16 +22,19 @@ public class CertificationController {
     }
 
     @GetMapping
+    @Cacheable(value = "certifications")
     public List<Certification> getAllCertifications() {
         return certificationRepository.findAll();
     }
 
     @PostMapping
+    @CacheEvict(value = "certifications", allEntries = true)
     public Certification createCertification(@Valid @RequestBody Certification certification) {
         return certificationRepository.save(certification);
     }
 
     @PutMapping("/{id}")
+    @CacheEvict(value = "certifications", allEntries = true)
     public ResponseEntity<Certification> updateCertification(@PathVariable Long id, @Valid @RequestBody Certification certDetails) {
         return certificationRepository.findById(id)
                 .map(cert -> {
@@ -44,6 +49,7 @@ public class CertificationController {
     }
 
     @DeleteMapping("/{id}")
+    @CacheEvict(value = "certifications", allEntries = true)
     public ResponseEntity<?> deleteCertification(@PathVariable Long id) {
         return certificationRepository.findById(id)
                 .map(cert -> {

@@ -1,23 +1,56 @@
 'use client';
 
 import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 interface HeatmapRow {
   label: string;
   intensity: number[];
 }
 
+interface DBSkill {
+  id: number;
+  name: string;
+  category: string;
+  proficiencyLevel: number;
+}
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+
+const fallbackSkills: DBSkill[] = [
+  { id: 1, name: 'Java', category: 'Backend', proficiencyLevel: 9 },
+  { id: 2, name: 'Spring Boot', category: 'Backend', proficiencyLevel: 9 },
+  { id: 3, name: 'PostgreSQL', category: 'Database', proficiencyLevel: 8 },
+  { id: 4, name: 'Docker', category: 'Cloud', proficiencyLevel: 8 },
+  { id: 5, name: 'Spring Security', category: 'Backend', proficiencyLevel: 8 },
+  { id: 6, name: 'System Design', category: 'Architecture', proficiencyLevel: 8 },
+  { id: 7, name: 'REST APIs', category: 'Backend', proficiencyLevel: 9 },
+  { id: 8, name: 'CI/CD', category: 'Tools', proficiencyLevel: 7 },
+];
+
+const getIntensity = (level: number, skillName: string) => {
+  const seed = skillName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return Array.from({ length: 16 }, (_, idx) => {
+    const offset = ((seed + idx * 7) % 3) - 1; // deterministically returns -1, 0, or 1
+    return Math.min(10, Math.max(1, level + offset));
+  });
+};
+
 export default function SkillsHeatmap() {
-  const data: HeatmapRow[] = [
-    { label: 'Java', intensity: [9, 8, 9, 9, 8, 9, 10, 9, 8, 9, 10, 9, 8, 9, 9, 8] },
-    { label: 'Spring Boot', intensity: [8, 9, 8, 9, 9, 8, 9, 10, 9, 8, 9, 8, 9, 9, 8, 9] },
-    { label: 'PostgreSQL', intensity: [7, 8, 7, 8, 8, 9, 8, 8, 7, 9, 8, 7, 8, 9, 8, 7] },
-    { label: 'Docker', intensity: [6, 7, 6, 7, 8, 7, 7, 8, 7, 6, 8, 7, 6, 8, 7, 8] },
-    { label: 'Spring Security', intensity: [8, 7, 8, 8, 7, 8, 9, 8, 8, 7, 8, 9, 8, 7, 8, 8] },
-    { label: 'System Design', intensity: [6, 7, 7, 8, 7, 8, 7, 8, 8, 9, 8, 7, 9, 8, 8, 9] },
-    { label: 'REST APIs', intensity: [9, 9, 8, 9, 9, 9, 10, 9, 9, 8, 9, 10, 9, 9, 8, 9] },
-    { label: 'CI/CD', intensity: [5, 6, 6, 7, 6, 7, 7, 7, 8, 7, 7, 8, 7, 8, 8, 8] },
-  ];
+  const { data: dbSkills = fallbackSkills } = useQuery<DBSkill[]>({
+    queryKey: ['skills'],
+    queryFn: async () => {
+      const response = await fetch(`${API_BASE}/skills`);
+      if (!response.ok) throw new Error('API fetch failed');
+      return response.json();
+    },
+  });
+
+  const data: HeatmapRow[] = dbSkills.map((s) => ({
+    label: s.name,
+    intensity: getIntensity(s.proficiencyLevel, s.name),
+  }));
+
 
   return (
     <section id="heatmap" className="relative py-16 px-6 md:px-12 bg-bg max-w-6xl mx-auto w-full">
