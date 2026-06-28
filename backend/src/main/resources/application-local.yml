@@ -15,6 +15,10 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
     show-sql: true
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: never
   flyway:
     enabled: false # H2 will be managed via DDL auto-update or manual creation for easy startup.
   cache:
