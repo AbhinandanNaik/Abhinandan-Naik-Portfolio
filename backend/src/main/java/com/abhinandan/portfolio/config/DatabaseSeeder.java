@@ -54,15 +54,23 @@ public class DatabaseSeeder implements CommandLineRunner {
     }
 
     private void seedUsers() {
-        if (userRepository.count() == 0) {
-            User admin = User.builder()
-                    .username("admin")
-                    .password(passwordEncoder.encode("admin123"))
-                    .role("ADMIN")
-                    .build();
-            userRepository.save(admin);
-            System.out.println(">>> SEED: Admin user created.");
-        }
+        userRepository.findByUsername("admin").ifPresentOrElse(
+            admin -> {
+                admin.setPassword(passwordEncoder.encode("admin123"));
+                admin.setRole("ADMIN");
+                userRepository.save(admin);
+                System.out.println(">>> SEED: Admin user updated to admin123.");
+            },
+            () -> {
+                User admin = User.builder()
+                        .username("admin")
+                        .password(passwordEncoder.encode("admin123"))
+                        .role("ADMIN")
+                        .build();
+                userRepository.save(admin);
+                System.out.println(">>> SEED: Admin user created.");
+            }
+        );
     }
 
     private void seedExperiences() {
